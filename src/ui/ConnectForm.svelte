@@ -1,13 +1,13 @@
 <script lang="ts">
   import type { WebSerialOptions } from "modbus-webserial";
-  import type { ConnectStatus } from "../lib/types/comp";
+  import type { ConnectStatus } from "@/types/comp";
   import { Input } from "$lib/components/ui/input";
   import * as Select from "$lib/components/ui/select";
-  import Button from "../lib/components/ui/button/button.svelte";
-  import Label from "../lib/components/ui/label/label.svelte";
-  import { Separator } from "../lib/components/ui/separator";
-  import { Badge } from "../lib/components/ui/badge";
-  import { defaultConfiguration, type ConnectionSettings } from "../sys/system";
+  import { Button } from "$lib/components/ui/button";
+  import { Label } from "$lib/components/ui/label";
+  import { Separator } from "$lib/components/ui/separator";
+  import { Badge } from "$lib/components/ui/badge";
+  import { defaultConfiguration, type ConnectionSettings } from "@/sys/system";
 
   let {
     status,

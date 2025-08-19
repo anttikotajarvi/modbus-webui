@@ -2,8 +2,8 @@
   import * as Table from "$lib/components/ui/table";
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
-  import HexInput from "./custom-input/HexInput.svelte;
-  import { HEX } from "../sys/panels";
+  import HexInput from "@/generics/custom-input/HexInput.svelte";
+  import { HEX } from "@/sys/panels";
 
   let {
     value = $bindable<Map<number, string>>(new Map()),
@@ -13,11 +13,11 @@
     label?: string;
   } = $props();
 
-  // force re-render when mutating the Map in place (internal)
+  // trigger re-render on in-place Map mutations
   let ver = $state(0);
   const bump = () => (ver = (ver + 1) | 0);
 
-  // nudge parent/bind by changing the Map reference after mutations
+  // replace Map reference to notify parent
   function poke() {
     value = new Map(value);
   }
@@ -31,7 +31,7 @@
     return arr;
   });
 
-  // input row
+  /* Input row */
   let inAddr = $state<number>(0);
   let inName = $state<string>("");
   let inError = $state<string | null>(null);
@@ -46,10 +46,9 @@
     const addr = inAddr ?? 0;
     const name = inName.trim();
 
-    if (addr < 0 || addr > 0xffff) { inError = "Address must be 0x0000–0xFFFF"; return; }
-    if (!name) { inError = "Name cannot be empty"; return; }
+    if (addr < 0 || addr > 0xffff) { inError = "Address must be 0x0000–0xFFFF"; return }
+    if (!name) { inError = "Name cannot be empty"; return }
     // allow overwriting existing names at same address
-    //if (value.has(addr)) { inError = Address ${HEX(addr, 4)} already exists; return; }
 
     value.set(addr, name); // mutate in place
     bump();

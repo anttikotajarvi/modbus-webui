@@ -3,9 +3,9 @@
   import * as Select from "$lib/components/ui/select";
   import { Button } from "$lib/components/ui/button";
   import { Separator } from "$lib/components/ui/separator";
-  import TagInput from "../custom-input/TagInput.svelte";
-  import NTSEditor from "./NTSEditor.svelte";
-  import type { NameBucketMap, NameTableSet, TAG } from "src/sys/system";
+  import TagInput from "@/generics/custom-input/TagInput.svelte";
+  import NTSEditor from "@/ui/NTSEditor.svelte";
+  import type { NameBucketMap, NameTableSet, TAG } from "@/sys/system";
 
   // Minimal API:
   // - open (bindable)
@@ -56,13 +56,12 @@
     newOpen = false;
     newId = null;
   }
-  import { useAlert } from "../lib/alert/context";
+  import { useAlert } from "@/ui/alert/context";
   const alert = useAlert();
 
   let currentDirty = $state(false); // bound from NTSEditor via a separate prop
 
   function handleSelect(nextId: string) {
-    console.log("Selected id:", nextId, "current dirty:", $state.snapshot(currentDirty));
     if (currentDirty) {
       alert.info(`Discarded unsaved changes to ${selectedId ?? "current set"}`);
     }

@@ -75,7 +75,9 @@ export type Library = {
   activeProfileTag: TAG | null; // for status bar text
 };
 
-// ---------- Constructors ----------
+// -------------------------
+// Constructors
+// -------------------------
 export function createEmptyNameTableSet(): NameTableSet {
   return {
     updatedAt: Date.now(),
@@ -95,7 +97,9 @@ export function createEmptyLibrary(): Library {
   };
 }
 
-// ---------- Pure updaters (return new objects; caller sets state) ----------
+// -------------------------
+// Pure updaters (return new objects; caller sets state)
+// -------------------------
 export function upsertNameTableSet(lib: Library, tag: TAG, nts: NameTableSet): Library {
   return {
     ...lib,
@@ -135,7 +139,9 @@ export function setActiveProfile(lib: Library, tag: TAG | null): Library {
   return { ...lib, activeProfileTag: tag ?? null };
 }
 
-// ---------- Serialization helpers (Map <-> JSON) ----------
+// -------------------------
+// Serialization helpers (Map <-> JSON)
+// -------------------------
 
 export type SerializableNameBucketMap = {
     iregs: [number, string][];
@@ -197,7 +203,9 @@ export function fromSerializable(obj: SerializableLibrary): Library {
   };
 }
 
-// ---------- Optional localStorage helpers (caller can ignore) ----------
+// -------------------------
+// Optional localStorage helpers (caller can ignore)
+// -------------------------
 const STORAGE_KEY = "modbus:library:v1";
 
 export function saveLibrary(lib: Library) {

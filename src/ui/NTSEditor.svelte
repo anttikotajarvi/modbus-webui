@@ -4,15 +4,15 @@
     import { Textarea } from "$lib/components/ui/textarea";
     import { Separator } from "$lib/components/ui/separator";
     import * as Tabs from "$lib/components/ui/tabs";
-    import NameMapEditor from "src/generics/NameMapEditor.svelte";
+    import NameMapEditor from "@/generics/NameMapEditor.svelte";
 
     import {
         fromSerializableNameBucketMap,
         toSerializableNameBucketMap,
         type NameBucketMap,
-    } from "src/sys/system";
+    } from "@/sys/system";
 
-    import { useAlert } from "../lib/alert/context";
+    import { useAlert } from "@/ui/alert/context";
     const alert = useAlert();
     // Edits a single NameBucketMap (iregs, hregs, coils, dinputs)
     let {
@@ -78,7 +78,7 @@
     const fromJson = (json: string) =>
         fromSerializableNameBucketMap(JSON.parse(json));
 
-    /* Dirtiness tracking - copied from App.svelte */
+    /* Dirtiness tracking */
     // gate for ignoring changes during initial load
     let _ignoreDirty = true;
     // release the gate after the first microtask
@@ -95,7 +95,6 @@
 
 
     // When initialData changes (parent switches set), reset editor
-    // Not perfect but doesnt matter since we remount this component on change
     $effect(() => {
         working = structuredClone(initialData);
         jsonText = toJson(initialData);
@@ -110,7 +109,7 @@
     });
 
     // Keep JSON in sync when the table editors mutate `working`.
-    // Avoid fighting user typing in the JSON area via a simple focus guard.
+    // Avoid fighting user typing in the JSON area via a simple focus guard
     let jsonActive = $state(false);
     $effect(() => {
         void $state.snapshot(working);
@@ -134,7 +133,7 @@
             parseError = (err as Error).message;
         }
     }
-    // JSON → working (manual paste/edit)
+    /* JSON -> working (manual paste/edit) */
     function onJsonInput(e: Event) {
         const el = e.target as HTMLTextAreaElement;
         jsonText = el.value;
@@ -145,7 +144,7 @@
         }, 1000);
     }
 
-    // buttons
+    /* Buttons */
     function resetToInitial() {
         working = structuredClone(initialData);
         jsonText = toJson(initialData);
@@ -158,7 +157,7 @@
         onsave(working);
     }
 
-    // Tabs state
+    /* Tabs state */
     let tab = $state<"hregs" | "iregs" | "coils" | "dinputs">("hregs");
 
     const labels: Record<typeof tab, string> = {

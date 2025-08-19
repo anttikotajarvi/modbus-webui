@@ -1,7 +1,7 @@
 <script lang="ts">
     import { cn, type WithElementRef } from "$lib/utils";
     import type { HTMLInputAttributes } from "svelte/elements";
-    import { Badge } from "../../lib/components/ui/badge";
+    import { Badge } from "$lib/components/ui/badge";
 
     type Props = WithElementRef<
         Omit<HTMLInputAttributes, "type" | "value"> & {
@@ -97,8 +97,8 @@
         normalize();
     }
 
-    // ---- minimal, robust input filter ----
-    // Reads the native <input> value from the composed path to avoid wrapper staleness.
+    // Minimal input filter
+    // Reads the native <input> value from the composed path to avoid wrapper staleness
     function onInput(e: Event) {
         const path = (e as any).composedPath?.() as EventTarget[] | undefined;
         const el =

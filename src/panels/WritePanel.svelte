@@ -1,12 +1,12 @@
 <script lang="ts">
-  import * as Collapsible from '../lib/components/ui/collapsible'
-  import * as Card from '../lib/components/ui/card'
-  import { Button } from '../lib/components/ui/button'
-  import { Label } from '../lib/components/ui/label'
-  import { Input, Root } from '../lib/components/ui/input'
-  import { Separator } from '../lib/components/ui/separator'
+  import * as Collapsible from '$lib/components/ui/collapsible'
+  import * as Card from '$lib/components/ui/card'
+  import { Button } from '$lib/components/ui/button'
+  import { Label } from '$lib/components/ui/label'
+  import { Input, Root } from '$lib/components/ui/input'
+  import { Separator } from '$lib/components/ui/separator'
   import { ChevronUp, WrapText } from 'lucide-svelte'
-  import * as Table from '../lib/components/ui/table'
+  import * as Table from '$lib/components/ui/table'
 
   import {
     BINg,
@@ -15,8 +15,8 @@
     type WriteFunction,
     type WriteQuery,
     type WriteResponse,
-  } from '../sys/panels'
-  import HexInput from '../custom-input/HexInput.svelte'
+  } from '@/sys/panels'
+  import HexInput from '@/generics/custom-input/HexInput.svelte'
 
   let {
     type,
@@ -56,12 +56,12 @@
   }
 
   let open = $state(true)
-  import HexArrayInput from '../custom-input/HexArrayInput.svelte'
+  import HexArrayInput from '@/generics/custom-input/HexArrayInput.svelte'
   import { getContext } from 'svelte'
-  import BinaryArrayInput from '../custom-input/BinaryArrayInput.svelte'
-  import { nameTableCategoryFromFunctionType, type NameTableSet } from '../sys/system'
-  import { useAlert } from '../lib/alert/context'
-  import TagInput from '../custom-input/TagInput.svelte'
+  import BinaryArrayInput from '@/generics/custom-input/BinaryArrayInput.svelte'
+  import { nameTableCategoryFromFunctionType, type NameTableSet } from '@/sys/system'
+  import { useAlert } from '@/ui/alert/context'
+  import TagInput from '@/generics/custom-input/TagInput.svelte'
   const regPrefix = (n: number) => regPrefixes[type] + `${n + 1}`
   let functionDisplayName = $derived(() => {
     switch (type) {
