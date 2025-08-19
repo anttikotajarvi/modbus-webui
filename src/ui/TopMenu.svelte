@@ -1,12 +1,12 @@
 <script lang="ts">
-  import * as Menubar from '../lib/components/ui/menubar'
-  import * as Dialog from '../lib/components/ui/dialog'
-  import { Separator } from '../lib/components/ui/separator'
-  import { Button } from '../lib/components/ui/button'
-  import { SCRATCH_ID, type Configuration, type TAG } from '../sys/system'
-  import TagInput from '../custom-input/TagInput.svelte'
+  import * as Menubar from '$lib/components/ui/menubar'
+  import * as Dialog from '$lib/components/ui/dialog'
+  import { Separator } from '$lib/components/ui/separator'
+  import { Button } from '$lib/components/ui/button'
+  import { SCRATCH_ID, type Configuration, type TAG } from '@/sys/system'
+  import TagInput from '@/generics/custom-input/TagInput.svelte'
   import { Scale } from 'lucide-svelte'
-  import { Content } from '../lib/components/ui/select'
+  import { Content } from '$lib/components/ui/select'
 
   let {
     // Name tables

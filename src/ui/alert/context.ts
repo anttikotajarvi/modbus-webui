@@ -12,7 +12,9 @@ export type ShowAlertFn = (opts: ShowAlertOptions) => AlertHandle;
 
 export const ALERT_CTX = Symbol("alert-ctx");
 
-// ---- portal-safe global fallback + queue ----
+// -------------------------
+// portal-safe global fallback + queue
+// -------------------------
 let globalShow: ShowAlertFn | null = null;
 const queue: ShowAlertOptions[] = [];
 
@@ -28,7 +30,9 @@ function resolveShow(): ShowAlertFn {
   try {
     const ctx = getContext<ShowAlertFn>(ALERT_CTX);
     if (ctx) return ctx;
-  } catch {/* no component instance yet */}
+  } catch {
+    // no component instance yet
+  }
   if (globalShow) return globalShow;
 
   // Fallback that *upgrades* itself when globalShow becomes available

@@ -1,22 +1,20 @@
 <script lang="ts">
   import './app.css'
-  import ConnectForm from './ui/ConnectForm.svelte'
+  import ConnectForm from '@/ui/ConnectForm.svelte'
   import { ModbusRTU, type WebSerialOptions, type WriteRegisterResult } from 'modbus-webserial'
-  import type { ConnectStatus } from './lib/types/comp'
-  import WordTable from './lib/WordTable.svelte'
-  import ReadPanel from './panels/ReadPanel.svelte'
+  import type { ConnectStatus } from '@/types/comp'
+  import ReadPanel from '@/panels/ReadPanel.svelte'
   import type {
     ReadResponse,
     ReadFunction,
     ReadQuery,
     WriteQuery,
     WriteResponse,
-  } from './sys/panels'
+  } from '@/sys/panels'
   import { onMount, setContext, tick } from 'svelte'
   import * as Card from '$lib/components/ui/card'
-  import WritePanel from './panels/WritePanel.svelte'
-  import TopMenu from './ui/TopMenu.svelte'
-  import TagInput from './custom-input/TagInput.svelte'
+  import WritePanel from '@/panels/WritePanel.svelte'
+  import TopMenu from '@/ui/TopMenu.svelte'
   import * as Dialog from '$lib/components/ui/dialog'
   import { Button } from '$lib/components/ui/button'
 
@@ -163,18 +161,16 @@
     loadLibrary,
     saveLibrary,
   } from './sys/system'
-  import CreateProfileModal from './ui/CreateProfileModal.svelte'
-  import { debounce } from './sys/generic'
-  import NameTableSetModal from './ui/NameTableSetModal.svelte'
-  import SystemAlert from '$lib/alert/SystemAlert.svelte'
+  import CreateProfileModal from '@/ui/CreateProfileModal.svelte'
+  import { debounce } from '@/sys/generic'
+  import NameTableSetModal from '@/ui/NameTableSetModal.svelte'
+  import SystemAlert from '@/ui/alert/SystemAlert.svelte'
 
   let modals = $state({ addProfileOpen: false, nameTableOpen: false })
 
-  // ----------------------------------
+  // -------------------------
   // Profile management
-  // - Chanegs are directly to library
-  // -> library is saved to localStorage for persistent changes
-  // ----------------------------------
+  // -------------------------
   /* Library */
   let lib = $state<Library>(
     (() => {
@@ -251,9 +247,8 @@
     }
   })
 
-  /* Profile management */
-  // All bindings and writings need to be done directly to 'lib'
-  // These are just readonly shothands
+  /* Derived references */
+  // Bind to 'lib' directly; these are readonly helpers
   let activeProfileId: Readonly<TAG> = $derived(lib.activeProfileTag ?? SCRATCH_ID)
   let currentProfile: Readonly<Configuration> = $derived(
     lib.profiles[activeProfileId] ?? defaultConfiguration,
@@ -291,8 +286,8 @@
     }
   }
 
-  import { useAlert } from '$lib/alert/context'
-  import QuickWritePanel from './panels/QuickWritePanel.svelte'
+  import { useAlert } from '@/ui/alert/context'
+  import QuickWritePanel from '@/panels/QuickWritePanel.svelte'
   const alert = useAlert()
 </script>
 
@@ -332,9 +327,7 @@
       <div
         class="mx-auto columns-1 lg:columns-2
                [column-gap:1rem]
-               /* two columns ≈ 2×900 + gap; adjust if you change clamp */
                lg:max-w-[calc(1800px+1rem)]
-               /* allow single column to still look like 700–900 */
                sm:max-w-[900px]"
       >
         <div class="mb-4 [break-inside:avoid]">

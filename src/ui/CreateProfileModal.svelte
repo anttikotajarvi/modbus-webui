@@ -1,10 +1,10 @@
 <script lang="ts">
   import * as Dialog from '$lib/components/ui/dialog'
   import { Button } from '$lib/components/ui/button'
-  import TagInput from './generics/custom-input/TagInput.svelte'
+  import TagInput from '@/generics/custom-input/TagInput.svelte'
   import { Label } from '$lib/components/ui/label'
   import * as RadioGroup from '$lib/components/ui/radio-group'
-    import { useAlert } from '$lib/alert/context'
+    import { useAlert } from '@/ui/alert/context'
   // Keep TAG simple here; parent can treat it as string
   type TAG = string
 
@@ -21,7 +21,6 @@
   let newId = $state<TAG | null>(null)
   let template = $state<'default' | 'current'>('default')
 
-  // pure helper
   function validateProfileId(id: string) {
     const v = (id ?? '').trim()
     if (v === '') return { valid: false, msg: 'Profile identifier cannot be empty' }

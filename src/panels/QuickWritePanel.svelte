@@ -1,14 +1,14 @@
 <script lang="ts">
-  import * as Card from '../lib/components/ui/card'
-  import * as Table from '../lib/components/ui/table'
-  import { Button } from '../lib/components/ui/button'
-  import { Separator } from '../lib/components/ui/separator'
+  import * as Card from '$lib/components/ui/card'
+  import * as Table from '$lib/components/ui/table'
+  import { Button } from '$lib/components/ui/button'
+  import { Separator } from '$lib/components/ui/separator'
   import { Play, Trash2 } from 'lucide-svelte'
   import { getContext } from 'svelte'
 
-  import { HEX, regPrefixes, type WriteQuery, type WriteResponse } from '../sys/panels'
-  import { useAlert } from '../lib/alert/context'
-    import { resolveAddressName, type NameTableSet } from '../sys/system'
+  import { HEX, regPrefixes, type WriteQuery, type WriteResponse } from '@/sys/panels'
+  import { useAlert } from '@/ui/alert/context'
+    import { resolveAddressName, type NameTableSet } from '@/sys/system'
 
   // Simple interface: a bindable map from name -> WriteQuery
   let { shortcuts = $bindable<Record<string, WriteQuery>>({}) , nts}: {

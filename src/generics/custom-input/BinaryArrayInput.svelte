@@ -1,11 +1,16 @@
 <script lang="ts">
   type Props = {
-    value?: boolean[];              // bind:value (array of booleans)
+    /** bind:value (array of booleans) */
+    value?: boolean[];
     placeholder?: string;
-    class?: string;                 // container classes
-    inputClass?: string;            // inner input classes
-    acceptBooleans?: boolean;       // allow true/false, y/n, on/off
-    buttons?: boolean;              // show quick-add 0/1 buttons
+    /** container classes */
+    class?: string;
+    /** inner input classes */
+    inputClass?: string;
+    /** allow true/false, y/n, on/off */
+    acceptBooleans?: boolean;
+    /** show quick-add 0/1 buttons */
+    buttons?: boolean;
   };
 
   let {

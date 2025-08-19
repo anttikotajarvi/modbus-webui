@@ -23,6 +23,9 @@ export default defineConfig({
   // keeps relative URLs working when you open the file directly
   base: './',
   resolve: {
-    alias: { $lib: path.resolve('./src/lib') }
+    alias: {
+      $lib: path.resolve('./src/lib'),
+      '@': path.resolve('./src')
+    }
   }
 });

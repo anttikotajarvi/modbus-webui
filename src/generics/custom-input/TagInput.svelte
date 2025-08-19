@@ -1,5 +1,4 @@
 <script lang="ts">
-  // if you prefer shadcn's Input, see the NOTE below
   type Props = {
     value?: string | null;
     placeholder?: string;
@@ -16,7 +15,7 @@
     inputClass = "",
   }: Props = $props();
 
-  // INTERNAL: always a string for the real <input>
+  // internal: always a string for the real <input>
   let raw = $state<string>(value ?? "");
 
   function sanitize(str: string): string {

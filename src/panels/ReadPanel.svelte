@@ -8,27 +8,27 @@
         type ReadPanelProps,
         type ReadResponse,
         type RPanelSettings,
-    } from "../sys/panels";
-    import { formatMs } from "../sys/generic";
+    } from "@/sys/panels";
+    import { formatMs } from "@/sys/generic";
     import { getContext } from "svelte";
     import { ModbusRTU } from "modbus-webserial";
 
     import * as Card from "$lib/components/ui/card";
     import * as Collapsible from "$lib/components/ui/collapsible";
-    import { Separator } from "../lib/components/ui/separator";
-    import { Button } from "../lib/components/ui/button";
-    import { Label } from "../lib/components/ui/label";
-    import { Input } from "../lib/components/ui/input";
+    import { Separator } from "$lib/components/ui/separator";
+    import { Button } from "$lib/components/ui/button";
+    import { Label } from "$lib/components/ui/label";
+    import { Input } from "$lib/components/ui/input";
     import { ChevronUp, RefreshCcw } from "lucide-svelte";
-    import { Badge } from "../lib/components/ui/badge";
-    import { Checkbox } from "../lib/components/ui/checkbox";
-    import HexInput from "../custom-input/HexInput.svelte";
-    import BitTable from "../lib/BitTable.svelte";
-    import WordTable from "../lib/WordTable.svelte";
-    import * as Alert from "../lib/components/ui/alert";
+    import { Badge } from "$lib/components/ui/badge";
+    import { Checkbox } from "$lib/components/ui/checkbox";
+    import HexInput from "@/generics/custom-input/HexInput.svelte";
+    import BitTable from "@/ui/BitTable.svelte";
+    import WordTable from "@/ui/WordTable.svelte";
+    import * as Alert from "$lib/components/ui/alert";
     import { fade } from "svelte/transition";
     import { Tween, tweened } from "svelte/motion";
-    import { nameTableCategoryFromFunctionType, toSerializableNameBucketMap, type NameTableSet } from "../sys/system";
+    import { nameTableCategoryFromFunctionType, toSerializableNameBucketMap, type NameTableSet } from "@/sys/system";
     let { type, name, nts }: { type: ReadFunction; name?: string; nts: NameTableSet } = $props();
 
     let lastRes = $state<ReadResponse | null>(null);
