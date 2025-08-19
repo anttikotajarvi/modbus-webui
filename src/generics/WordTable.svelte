@@ -26,7 +26,7 @@
   </TableHeader>
 
   <TableBody>
-    {#each words as word, index}
+    {#each words as word, index (startAddress + index)}
       {@const address = startAddress + index}
       {@const name = names.get(address)}
       <TableRow>

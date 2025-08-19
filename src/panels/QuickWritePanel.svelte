@@ -2,7 +2,6 @@
   import * as Card from '$lib/components/ui/card'
   import * as Table from '$lib/components/ui/table'
   import { Button } from '$lib/components/ui/button'
-  import { Separator } from '$lib/components/ui/separator'
   import { Play, Trash2 } from 'lucide-svelte'
   import { getContext } from 'svelte'
 
@@ -36,7 +35,7 @@
     const parts = vals
       .slice(0, maxVals)
       .map((v) => (q.type === 'write_coils' ? (v ? '0x01' : '0x00') : HEX(v as number)))
-    const more = vals.length > maxVals ? ` …(+${vals.length - maxVals})` : ''
+    //const more = vals.length > maxVals ? ` …(+${vals.length - maxVals})` : ''
     return { label: fnLabel(q), address: addr, parts: parts.join(' ') }
   }
 

@@ -2,7 +2,7 @@
 // Keep this file framework-agnostic; App.svelte owns state & persistence.
 
 import type { WebSerialOptions } from "modbus-webserial";
-import type { ReadFunction, readFunctions, ReadQuery, WriteFunction, WriteQuery } from "./panels";
+import type { ReadFunction, ReadQuery, WriteFunction, WriteQuery } from "./panels";
 
 export type TAG = string;
 
@@ -211,7 +211,11 @@ const STORAGE_KEY = "modbus:library:v1";
 export function saveLibrary(lib: Library) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(toSerializable(lib)));
-  } catch {}
+  } catch {
+    console.warn("Failed to save library to localStorage, it may be full or unavailable.");
+    // Note: you might want to handle this more gracefully in a real app
+    // e.g., by notifying the user or falling back to IndexedDB.
+  }
 }
 
 export function loadLibrary(): Library {

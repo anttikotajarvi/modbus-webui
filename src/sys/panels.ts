@@ -1,5 +1,3 @@
-import type { NameTableSet } from "./system";
-
 const readFunctions = [
     "read_input_registers",
     "read_holding_registers",

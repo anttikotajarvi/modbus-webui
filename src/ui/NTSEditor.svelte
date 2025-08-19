@@ -12,18 +12,16 @@
         type NameBucketMap,
     } from "@/sys/system";
 
-    import { useAlert } from "@/ui/alert/context";
-    const alert = useAlert();
     // Edits a single NameBucketMap (iregs, hregs, coils, dinputs)
     let {
         initialData,
-        onsave = (nts: NameBucketMap) => {},
-        ondelete = () => {},
+        onsave,
+        ondelete,
         dirty = $bindable<boolean>(false),
     }: {
         initialData: NameBucketMap;
-        onsave?: (nts: NameBucketMap) => void;
-        ondelete?: () => void;
+        onsave: (nts: NameBucketMap) => void;
+        ondelete: () => void;
         dirty: boolean;
     } = $props();
 
@@ -121,7 +119,7 @@
             parseError = null;
         }
     });
-    let jsonDebounceTimeout: NodeJS.Timeout;
+    let jsonDebounceTimeout: ReturnType<typeof setTimeout>;
     function applyFromJson() {
         clearTimeout(jsonDebounceTimeout);
         // JSON → working

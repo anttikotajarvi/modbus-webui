@@ -10,7 +10,6 @@
     placeholder = 'e.g. 16 0x10 42',
     display = 'auto' as DisplayMode,
     uppercaseHex = true,
-    class: className = '',
     inputClass = '',
   } = $props();
 
@@ -49,6 +48,7 @@
     return true;
   }
 
+  // eslint-disable-next-line
   function removeAt(i: number) {
     value = [...value.slice(0, i), ...value.slice(i + 1)];
     inputEl?.focus();

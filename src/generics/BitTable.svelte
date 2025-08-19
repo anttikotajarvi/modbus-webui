@@ -24,7 +24,7 @@
   </TableHeader>
 
   <TableBody>
-    {#each bits as bit, index}
+    {#each bits as bit, index (startAddress + index)}
       {@const address = startAddress + index}
       {@const name = names.get(address) || 'n/a'}
       <TableRow>

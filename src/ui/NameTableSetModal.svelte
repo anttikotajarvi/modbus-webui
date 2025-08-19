@@ -5,7 +5,7 @@
   import { Separator } from "$lib/components/ui/separator";
   import TagInput from "@/generics/custom-input/TagInput.svelte";
   import NTSEditor from "@/ui/NTSEditor.svelte";
-  import type { NameBucketMap, NameTableSet, TAG } from "@/sys/system";
+  import type { NameTableSet, TAG } from "@/sys/system";
 
   // Minimal API:
   // - open (bindable)
@@ -91,7 +91,7 @@
                 >{/if}
             </Select.Trigger>
             <Select.Content>
-              {#each ntsIds as id}
+              {#each ntsIds as id (id)}
                 <Select.Item value={id}>{id}</Select.Item>
               {/each}
             </Select.Content>

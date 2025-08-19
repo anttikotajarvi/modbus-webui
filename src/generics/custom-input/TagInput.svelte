@@ -19,9 +19,12 @@
   let raw = $state<string>(value ?? "");
 
   function sanitize(str: string): string {
-    let s = str.replace(/\s+/g, "_").replace(/[^A-Za-z0-9_]/g, "").toUpperCase();
-    s = s.replace(/^[0-9]+/, "");      // no leading digits
-    s = s.replace(/_{2,}/g, "_");      // collapse underscores
+    let s = str
+      .replace(/\s+/g, "_")
+      .replace(/[^A-Za-z0-9_]/g, "")
+      .toUpperCase();
+    s = s.replace(/^[0-9]+/, ""); // no leading digits
+    s = s.replace(/_{2,}/g, "_"); // collapse underscores
     return s;
   }
 
@@ -41,7 +44,8 @@
   }
 
   const pattern = "[A-Z_][A-Z0-9_]*";
-  const title = "Use A–Z and underscore; digits allowed but not as the first character.";
+  const title =
+    "Use A–Z and underscore; digits allowed but not as the first character.";
 </script>
 
 <div class={className}>
@@ -52,10 +56,10 @@
     autocapitalize="off"
     autocomplete="off"
     spellcheck="false"
-    value={raw}             
-    oninput={onInput}  
+    value={raw}
+    oninput={onInput}
     {placeholder}
-    pattern={pattern}
-    title={title}
+    {pattern}
+    {title}
   />
 </div>

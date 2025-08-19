@@ -19,6 +19,8 @@
 
   // replace Map reference to notify parent
   function poke() {
+    // TODO: use SvelteMap
+    // eslint-disable-next-line svelte/prefer-svelte-reactivity
     value = new Map(value);
   }
 

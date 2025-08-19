@@ -1,23 +1,18 @@
 <script lang="ts">
   import './app.css'
   import ConnectForm from '@/ui/ConnectForm.svelte'
-  import { ModbusRTU, type WebSerialOptions, type WriteRegisterResult } from 'modbus-webserial'
+  import { ModbusRTU } from 'modbus-webserial'
   import type { ConnectStatus } from '@/types/comp'
   import ReadPanel from '@/panels/ReadPanel.svelte'
   import type {
     ReadResponse,
-    ReadFunction,
     ReadQuery,
     WriteQuery,
     WriteResponse,
   } from '@/sys/panels'
-  import { onMount, setContext, tick } from 'svelte'
-  import * as Card from '$lib/components/ui/card'
+  import { onMount, setContext } from 'svelte'
   import WritePanel from '@/panels/WritePanel.svelte'
   import TopMenu from '@/ui/TopMenu.svelte'
-  import * as Dialog from '$lib/components/ui/dialog'
-  import { Button } from '$lib/components/ui/button'
-
   // console commands
   const consoleCommands = {
     resetStorage: () => {
@@ -155,9 +150,7 @@
     createEmptyNameTableSet,
     type NameTableSet,
     deleteNameTableSet,
-    type NameBucketMap,
     type Configuration,
-    toSerializableNameBucketMap,
     loadLibrary,
     saveLibrary,
   } from './sys/system'
@@ -198,18 +191,16 @@
     saveLibrary(snapshot)
     libraryDirty = false
     lastSavedAt = Date.now()
-    autosaveError = null
   }
   // Autosave - debounced
   const AUTOSAVE_DELAY = 1000
   let lastSavedAt = $state<number | null>(null)
-  let autosaveError = $state<string | null>(null)
 
   const autosaveDebounced = debounce((snap: Library) => {
     try {
       _save(snap)
     } catch (e) {
-      autosaveError = (e as Error).message ?? String(e)
+      console.error('Autosave failed:', e)
     }
   }, AUTOSAVE_DELAY)
 
@@ -235,7 +226,9 @@
       if (!libraryDirty) return
       try {
         _save($state.snapshot(lib))
-      } catch {}
+      } catch (e) {
+        console.error('Autosave failed:', e)
+      }
     }
     window.addEventListener('beforeunload', flush)
     document.addEventListener('visibilitychange', () => {

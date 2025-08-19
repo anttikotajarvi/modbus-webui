@@ -1,12 +1,7 @@
 <script lang="ts">
   import * as Menubar from '$lib/components/ui/menubar'
-  import * as Dialog from '$lib/components/ui/dialog'
   import { Separator } from '$lib/components/ui/separator'
-  import { Button } from '$lib/components/ui/button'
-  import { SCRATCH_ID, type Configuration, type TAG } from '@/sys/system'
-  import TagInput from '@/generics/custom-input/TagInput.svelte'
-  import { Scale } from 'lucide-svelte'
-  import { Content } from '$lib/components/ui/select'
+  import { SCRATCH_ID, type TAG } from '@/sys/system'
 
   let {
     // Name tables
@@ -73,7 +68,7 @@
         {#if profileTags.length === 1 && profileTags[0] === SCRATCH_ID}
           <Menubar.Item disabled>No profiles</Menubar.Item>
         {:else}
-          {#each profileTags as p}
+          {#each profileTags as p (p)}
             {#if p !== SCRATCH_ID}
               <Menubar.Item onclick={() => selectProfile(p)}>
                 <span class="inline-flex items-center gap-2">
@@ -101,7 +96,7 @@
         {#if ntsTags.length === 0}
           <Menubar.Item disabled>No name tables</Menubar.Item>
         {:else}
-          {#each ntsTags as s}
+          {#each ntsTags as s (s)}
             <Menubar.Item onclick={() => applyNts(s)}>
               <span class="inline-flex items-center gap-2">
                 {#if activeNtsTag === s}
