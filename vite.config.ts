@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { viteSingleFile } from "vite-plugin-singlefile";
 import path from "path";
-import pkg from "./package.json" assert { type: "json" };
+import pkg from "./package.json" with { type: "json" };
 
 export default defineConfig({
   define: { "import.meta.env.VITE_APP_VERSION": JSON.stringify(pkg.version) },
