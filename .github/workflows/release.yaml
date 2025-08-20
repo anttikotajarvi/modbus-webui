@@ -1,46 +1,45 @@
 name: Release
 
 on:
-  pull_request:
-    branches: [ main ]          # PRs only run build check
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+' # publish only on vX.Y.Z tags
+      - 'v[0-9]+.[0-9]+.[0-9]+'   # run only on vX.Y.Z tags
 
 jobs:
-  build-check:
-    name: Build check (PRs)
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - run: test -f dist/modbus-webui.html
-
   publish-npm:
-    name: Build & publish to npm (tags only)
+    name: Build & publish to npm
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}   # token available to all steps
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           registry-url: 'https://registry.npmjs.org/'
           always-auth: true
-      - run: npm ci
-      - run: npm run build
-      - run: test -f dist/modbus-webui.html
-      - run: chmod +x bin/cli.mjs
+
+      # Ensure npm has the token even if a repo .npmrc exists
+      - name: Configure npm auth
+        run: echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (must emit dist/modbus-webui.html)
+        run: npm run build
+
+      - name: Sanity check single-file output
+        run: test -f dist/modbus-webui.html
+
+      - name: Ensure CLI is executable
+        run: chmod +x bin/cli.mjs
+
       - name: Publish package
-        # extra guard so this NEVER runs on PRs even if triggers change later
-        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
         run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
