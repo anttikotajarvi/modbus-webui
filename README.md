@@ -1,47 +1,91 @@
-# Svelte + TS + Vite
+# modbus-webui (beta)
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+Single-file Modbus workbench — profiles, name tables, shortcuts.
 
-## Recommended IDE Setup
+## What it is
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+A browser-based UI for Modbus devices. Runs fully client-side via the [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API) and [modbus-webserial](https://www.npmjs.com/package/modbus-webserial). No install required to use the app; optional CLI for quick start.
 
-## Need an official Svelte framework?
+---
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+## Quick start (npx)
 
-## Technical considerations
+```bash
+# serve the packaged HTML immediately
+npx modbus-webui start
 
-**Why use this over SvelteKit?**
-
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
-
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
-
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
-
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
-
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `allowJs` in the TS template?**
-
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+# or write the HTML to your cwd, then serve it
+npx modbus-webui init
+npx modbus-webui serve
+# options:
+#   --port=5173
+#   init [filename] [--force]
+#   serve [filename] [--port=...]
 ```
+
+You can also download the single `modbus-webui.html` file and open it directly in a supported browser.
+
+---
+
+## Features
+
+* **Read / write** coils and registers
+* **Profiles**: per-device settings + saved write shortcuts
+* **Name tables**: global sets covering coils, discrete inputs, holding and input registers
+* **Shortcuts**: one-click saved writes
+* **Local persistence**: everything stored in your browser
+
+---
+
+## Basic usage
+
+1. Click **Connect** and choose your serial port.
+2. Set port parameters (baud, parity, etc.) and click **Open**.
+3. Use **Read** / **Write** panels to operate coils and registers.
+4. Save frequent actions as **Shortcuts** and run them from the Shortcuts panel.
+5. Use **Name Tables** to label addresses; **Profiles** keep device-specific setup.
+
+---
+
+## Concepts
+
+### Profiles
+
+* Hold your selected name-table set, connection settings, and write shortcuts.
+* Changes apply immediately to the active profile. Switching profiles does **not** disconnect the port.
+
+### Name tables
+
+* Stored **globally**; any profile can select a set to use.
+* Cover all four areas: coils, discrete inputs, holding registers, input registers.
+* Names are linked to addresses (enter as decimal or hex). Edit via the Name Tables modal or copy/paste a full set as JSON.
+
+### Storage & versioning
+
+* All data is kept as a single **library** and saved to `localStorage` (auto or manual save).
+* The stored data is versioned to allow future migrations.
+
+---
+
+## Browser support
+
+* Requires **Chromium-based desktop** browsers with Web Serial enabled.
+* You grant port access per session; after reload you may need to select the port again.
+* The app will show a notice if Web Serial isn’t available.
+
+---
+
+## Development
+
+```bash
+# install
+npm i
+
+# dev
+npm run dev
+
+# build (emits dist/modbus-webui.html)
+npm run build
+```
+
+---
