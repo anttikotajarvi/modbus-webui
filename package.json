@@ -1,6 +1,6 @@
 {
   "name": "modbus-webui",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "type": "module",
   "bin": { "modbus-webui": "bin/cli.mjs" },
   "files": ["bin", "dist/modbus-webui.html", "README.md", "LICENSE"],
