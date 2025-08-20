@@ -4,11 +4,16 @@ Single-file Modbus workbench — profiles, name tables, shortcuts.
 
 ## What it is
 
-A browser-based UI for Modbus devices. Runs fully client-side via the [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API) and [modbus-webserial](https://www.npmjs.com/package/modbus-webserial). No install required to use the app; optional CLI for quick start.
+A browser-based UI for Modbus devices. Runs fully client-side via the [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API) and [modbus-webserial](https://www.npmjs.com/package/modbus-webserial). No install required to use the app; optional CLI for quick start. \
+Built with [Svelte](https://svelte.dev) and [shadcn](https://www.shadcn-svelte.com/). 
 
 ---
 
-## Quick start (npx)
+## Quick start
+
+### Directly from Github Pages
+### --> [modbus-webUI](https://anttikotajarvi.github.io/modbus-webui/) <--
+### or with npx
 
 ```bash
 # serve the packaged HTML immediately

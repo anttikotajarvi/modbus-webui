@@ -2,6 +2,7 @@
   export let githubUrl = "https://github.com/yourname/modbus-webui";
   const appName = "modbus-webUI";
   const githubLabel = "GitHub: modbus-webui";
+  const version = import.meta.env.VITE_APP_VERSION;
 </script>
 <footer class="border-t w-full">
   <div class="w-full px-4 py-8 text-sm text-muted-foreground">
@@ -9,7 +10,7 @@
     <div class="grid gap-8 grid-cols-1 md:[grid-template-columns:minmax(16rem,20vw)_1fr]">
       <!-- LEFT: title + about -->
       <aside class="space-y-4 md:pr-8">
-        <h1 class="text-xl text-foreground tracking-wide">{appName}</h1>
+        <h1 class="text-xl text-foreground tracking-wide">{appName} <span class="text-muted-foreground">v{version}</span></h1>
         <h3>Single-file Modbus workbench—profiles, name tables, shortcuts.</h3>
         <section aria-labelledby="about">
           <h3 id="about" class="mb-2 font-semibold text-foreground">About</h3>
