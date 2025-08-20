@@ -363,7 +363,7 @@
   bind:activeNtsId={lib.profiles[activeProfileId].nameTableSetId}
   onCreate={(id: TAG) => {
     lib = upsertNameTableSet(lib, id, createEmptyNameTableSet())
-    lib.profiles[activeProfileId].nameTableSetId = id
+    lib.profiles[activeProfileId].nameTableSetId =  id
   }}
   onSave={(id: TAG, nts: NameTableSet) => {
     lib = upsertNameTableSet(lib, id, nts)
