@@ -281,8 +281,11 @@
 
   import { useAlert } from '@/ui/alert/context'
   import QuickWritePanel from '@/panels/QuickWritePanel.svelte'
+  import Footer from './ui/Footer.svelte';
   const alert = useAlert()
 </script>
+
+<div class="flex min-h-dvh flex-col">  <!-- or min-h-screen -->
 
 <SystemAlert />
 <CreateProfileModal
@@ -290,6 +293,7 @@
   existingIds={Object.keys(lib.profiles)}
   onCreate={handleCreateProfile}
 />
+
 <TopMenu
   ntsTags={Object.keys(lib.nameTables)}
   bind:activeNtsTag={lib.profiles[activeProfileId].nameTableSetId}
@@ -333,7 +337,7 @@
           <ReadPanel type="read_coils" nts={currentNTS} />
         </div>
         <div class="mb-4 [break-inside:avoid]">
-          <ReadPanel type="read_coils" nts={currentNTS} />
+          <ReadPanel type="read_discrete_inputs" nts={currentNTS} />
         </div>
         <!-- add more read panels with the same wrapper -->
       </div>
@@ -347,7 +351,7 @@
     </aside>
   </div>
 </main>
-
+<Footer />
 
 
 
@@ -359,7 +363,7 @@
   bind:activeNtsId={lib.profiles[activeProfileId].nameTableSetId}
   onCreate={(id: TAG) => {
     lib = upsertNameTableSet(lib, id, createEmptyNameTableSet())
-    lib.profiles[activeProfileId].nameTableSetId = id
+    lib.profiles[activeProfileId].nameTableSetId =  id
   }}
   onSave={(id: TAG, nts: NameTableSet) => {
     lib = upsertNameTableSet(lib, id, nts)
@@ -370,3 +374,5 @@
     lib.profiles[activeProfileId].nameTableSetId = null
   }}
 />
+
+</div>  
