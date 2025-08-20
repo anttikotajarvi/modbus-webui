@@ -281,8 +281,11 @@
 
   import { useAlert } from '@/ui/alert/context'
   import QuickWritePanel from '@/panels/QuickWritePanel.svelte'
+  import Footer from './ui/Footer.svelte';
   const alert = useAlert()
 </script>
+
+<div class="flex min-h-dvh flex-col">  <!-- or min-h-screen -->
 
 <SystemAlert />
 <CreateProfileModal
@@ -290,6 +293,7 @@
   existingIds={Object.keys(lib.profiles)}
   onCreate={handleCreateProfile}
 />
+
 <TopMenu
   ntsTags={Object.keys(lib.nameTables)}
   bind:activeNtsTag={lib.profiles[activeProfileId].nameTableSetId}
@@ -347,7 +351,7 @@
     </aside>
   </div>
 </main>
-
+<Footer />
 
 
 
@@ -370,3 +374,5 @@
     lib.profiles[activeProfileId].nameTableSetId = null
   }}
 />
+
+</div>  
