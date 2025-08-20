@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let githubUrl = "https://github.com/yourname/modbus-webui";
+  export let githubUrl = "https://github.com/anttikotajarvi/modbus-webui";
   const appName = "modbus-webUI";
   const githubLabel = "GitHub: modbus-webui";
   const version = import.meta.env.VITE_APP_VERSION;
