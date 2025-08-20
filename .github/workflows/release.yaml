@@ -1,16 +1,16 @@
 name: Release
 
 on:
-  # Publish only when you push a version tag like v0.1.0
-  push:
-    tags:
-      - 'v*'
-  # Build on PRs to main, but do NOT publish
+  # Build check on PRs into main (no secrets used)
   pull_request:
     branches: [ main ]
 
+  # Actual release only when you push a version tag like v0.1.2
+  push:
+    tags:
+      - 'v*'
+
 jobs:
-  # ---- Build-only CI for PRs (no secrets needed) ----
   build-check:
     name: Build check (PRs)
     runs-on: ubuntu-latest
@@ -25,47 +25,23 @@ jobs:
       - run: npm run build
       - run: test -f dist/modbus-webui.html
 
-  # ---- Publish on version tags ----
   publish-npm:
-    name: Build & publish to npm
+    name: Build & publish to npm (tags only)
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           registry-url: 'https://registry.npmjs.org/'
           always-auth: true
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Build
-        run: npm run build   # must produce dist/modbus-webui.html
-
-      - name: Sanity check output
-        run: test -f dist/modbus-webui.html
-
-      - name: Ensure CLI is executable
-        run: chmod +x bin/cli.mjs
-
-      # Optional: pack & upload the tarball (handy for debugging releases)
-      - name: Pack npm tarball
-        id: pack
-        run: |
-          PKG=$(npm pack --silent)
-          echo "pkg=$PKG" >> "$GITHUB_OUTPUT"
-
-      - name: Upload tarball artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.pack.outputs.pkg }}
-          path: ${{ steps.pack.outputs.pkg }}
-
+      - run: npm ci
+      - run: npm run build
+      - run: test -f dist/modbus-webui.html
+      - run: chmod +x bin/cli.mjs
       - name: Publish package
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
