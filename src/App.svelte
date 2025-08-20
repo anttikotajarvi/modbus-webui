@@ -333,7 +333,7 @@
           <ReadPanel type="read_coils" nts={currentNTS} />
         </div>
         <div class="mb-4 [break-inside:avoid]">
-          <ReadPanel type="read_coils" nts={currentNTS} />
+          <ReadPanel type="read_discrete_inputs" nts={currentNTS} />
         </div>
         <!-- add more read panels with the same wrapper -->
       </div>

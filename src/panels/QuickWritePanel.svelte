@@ -46,7 +46,7 @@
       const res = await writeToClient(q)
       const prefix = regPrefixes[q.type]
       alert.success(
-        'Write executed',
+        `'${name}' write successful`,
         `${fnLabel(q)} @ ${HEX(res.address)} (${prefix}${res.address + 1}) → ${res.quantity} value(s)`,
       )
     } catch (e: any) {

@@ -10,6 +10,10 @@ export default defineConfig({
     svelte({
       compilerOptions: {
         customElement: true // enable custom elements
+      },
+      onwarn(warning, handler) {
+        if (warning.code === 'custom_element_props_identifier') return;
+        handler(warning);
       }
     }), // Svelte 5 compiler
     viteSingleFile() // inline JS & CSS → one HTML file
