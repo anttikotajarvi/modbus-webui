@@ -5,6 +5,10 @@ import App from './App.svelte'
     interface Window {
       MB_APP?: {
         resetStorage: () => void;
+        printLibraryToConsole: () => void;
+        exportLibrary: () => void;
+        importLibrary: (json: string) => void;
+        importLibraryFromFile: () => void;
       };
     }
   }
