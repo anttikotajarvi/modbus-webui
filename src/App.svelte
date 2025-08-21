@@ -4,26 +4,121 @@
   import { ModbusRTU } from 'modbus-webserial'
   import type { ConnectStatus } from '@/types/comp'
   import ReadPanel from '@/panels/ReadPanel.svelte'
-  import type {
-    ReadResponse,
-    ReadQuery,
-    WriteQuery,
-    WriteResponse,
-  } from '@/sys/panels'
+  import type { ReadResponse, ReadQuery, WriteQuery, WriteResponse } from '@/sys/panels'
   import { onMount, setContext } from 'svelte'
   import WritePanel from '@/panels/WritePanel.svelte'
   import TopMenu from '@/ui/TopMenu.svelte'
-  // console commands
+  // ------------------------
+  // Console commands
+  // ------------------------
+  // safe alerts (no-throw, even if alert is undefined/broken)
+  const sa = {
+    success: (msg: string) => {
+      try {
+        ;(alert as any)?.success?.(msg)
+      } catch {}
+    },
+    info: (msg: string) => {
+      try {
+        ;(alert as any)?.info?.(msg)
+      } catch {}
+    },
+    error: (msg: string) => {
+      try {
+        ;(alert as any)?.error?.(msg)
+      } catch {}
+    },
+  }
+
   const consoleCommands = {
     resetStorage: () => {
       lib = createEmptyLibrary()
       saveLibrary(lib)
-      alert.success('Storage reset to default state.')
+      sa.success('Storage reset to default state.')
+    },
+
+    printLibraryToConsole: () => {
+      console.log('Current library state:', $state.snapshot(lib))
+      sa.info('Library state printed to console.')
+    },
+
+    exportLibrary: () => {
+      const data = JSON.stringify($state.snapshot(lib), null, 2)
+      const blob = new Blob([data], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `modbus-webui-library-${STORAGE_VERSION}.json`
+      a.click()
+      // revoke on next tick to avoid aborting downloads in some browsers
+      setTimeout(() => URL.revokeObjectURL(url), 0)
+      sa.success('Library exported successfully.')
+    },
+
+    importLibrary: (json: string) => {
+      try {
+        const parsed = JSON.parse(json)
+        if (typeof parsed !== 'object' || parsed === null) {
+          throw new Error('Invalid JSON format')
+        }
+        lib = structuredClone(parsed)
+        saveLibrary(lib)
+        sa.success('Library imported successfully.')
+      } catch (err) {
+        console.error('Import failed:', err)
+        const msg = err instanceof Error ? err.message : String(err)
+        sa.error(`Import failed: ${msg}`)
+      }
+    },
+
+    importLibraryFromFile: async () => {
+      try {
+        if ('showOpenFilePicker' in window) {
+          // @ts-expect-error: FS Access API types not always present
+          const [handle] = await window.showOpenFilePicker({
+            types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
+            multiple: false,
+          })
+          const file = await handle.getFile()
+          const text = await file.text()
+          consoleCommands.importLibrary(text)
+          return
+        }
+
+        // Fallback: ad-hoc <input type="file">
+        const input = document.createElement('input')
+        input.type = 'file'
+        input.accept = 'application/json,.json'
+        input.style.position = 'fixed'
+        input.style.left = '-9999px'
+        document.body.appendChild(input)
+        input.onchange = async () => {
+          try {
+            const file = input.files?.[0]
+            if (!file) return
+            const text = await file.text()
+            consoleCommands.importLibrary(text)
+          } finally {
+            input.remove()
+          }
+        }
+        input.click()
+      } catch (err) {
+        if ((err as any)?.name === 'AbortError') return // user canceled
+        console.error('Import picker failed:', err)
+        const msg = err instanceof Error ? err.message : String(err)
+        sa.error(`Import failed: ${msg}`)
+      }
     },
   }
-  ;(globalThis as any).MB_APP = (globalThis as any).MB_APP || {}
+
+  // expose to window early so it works even if UI fails later
+  ;(globalThis as any).MB_APP ??= {}
   Object.assign((globalThis as any).MB_APP, consoleCommands)
 
+  // ------------------------
+  // Modbus client setup
+  // ------------------------
   let client: ModbusRTU | null = null
   const conn: ConnectStatus = $state<ConnectStatus>({
     status: 'idle',
@@ -153,6 +248,7 @@
     type Configuration,
     loadLibrary,
     saveLibrary,
+    STORAGE_VERSION,
   } from './sys/system'
   import CreateProfileModal from '@/ui/CreateProfileModal.svelte'
   import { debounce } from '@/sys/generic'
@@ -281,98 +377,132 @@
 
   import { useAlert } from '@/ui/alert/context'
   import QuickWritePanel from '@/panels/QuickWritePanel.svelte'
-  import Footer from './ui/Footer.svelte';
+  import Footer from './ui/Footer.svelte'
   const alert = useAlert()
 </script>
 
-<div class="flex min-h-dvh flex-col">  <!-- or min-h-screen -->
+<div class="flex min-h-dvh flex-col">
+  <!-- or min-h-screen -->
 
-<SystemAlert />
-<CreateProfileModal
-  bind:open={modals.addProfileOpen}
-  existingIds={Object.keys(lib.profiles)}
-  onCreate={handleCreateProfile}
-/>
+  <SystemAlert />
+  <CreateProfileModal
+    bind:open={modals.addProfileOpen}
+    existingIds={Object.keys(lib.profiles)}
+    onCreate={handleCreateProfile}
+  />
 
-<TopMenu
-  ntsTags={Object.keys(lib.nameTables)}
-  bind:activeNtsTag={lib.profiles[activeProfileId].nameTableSetId}
-  onEditNts={() => (modals.nameTableOpen = true)}
-  profileTags={Object.keys(lib.profiles)}
-  bind:activeProfileId={lib.activeProfileTag}
-  onProfileSelect={(id) => (lib.activeProfileTag = id)}
-  onProfileAdd={() => (modals.addProfileOpen = true)}
-  onProfileDelete={() => handleDeleteProfile(lib.activeProfileTag)}
-  {libraryDirty}
-  onLibrarySave={PersistLibrary}
-  {lastSavedAt}
-/>
+  <TopMenu
+    ntsTags={Object.keys(lib.nameTables)}
+    bind:activeNtsTag={lib.profiles[activeProfileId].nameTableSetId}
+    onEditNts={() => (modals.nameTableOpen = true)}
+    profileTags={Object.keys(lib.profiles)}
+    bind:activeProfileId={lib.activeProfileTag}
+    onProfileSelect={(id) => (lib.activeProfileTag = id)}
+    onProfileAdd={() => (modals.addProfileOpen = true)}
+    onProfileDelete={() => handleDeleteProfile(lib.activeProfileTag)}
+    {libraryDirty}
+    onLibrarySave={PersistLibrary}
+    {lastSavedAt}
+  />
 
-<ConnectForm
-  bind:settings={lib.profiles[activeProfileId].connectionSettings}
-  status={conn}
-  onsubmit={Connect}
-  ondisconnect={Disconnect}
-/>
-<!-- App shell: make page fill the viewport -->
+  <ConnectForm
+    bind:settings={lib.profiles[activeProfileId].connectionSettings}
+    status={conn}
+    onsubmit={Connect}
+    ondisconnect={Disconnect}
+  />
+  <!-- App shell: make page fill the viewport -->
+  <!-- App.svelte layout snippet -->
+  <main class="flex-1 p-4 min-w-0">
+    <!-- Stack by default; only split into C1 (reads) + C2 (writes) when there's room for both -->
+    <div class="grid gap-6 min-w-0 min-[1480px]:grid-cols-[minmax(0,1fr)_clamp(700px,28vw,900px)]">
+      <!-- C1: READS (NO min-width here!) -->
+      <section class="reads min-w-0">
+        <div class="reads-grid">
+          <div class="col">
+            <div class="wrap grid gap-4 w-full max-w-[900px] mx-auto">
+              <ReadPanel type="read_holding_registers" nts={currentNTS} />
+              <ReadPanel type="read_input_registers" nts={currentNTS} />
+            </div>
+          </div>
 
-<main class="flex-1 p-4">
-  <div class="mx-auto max-w-screen-3xl grid gap-6 lg:grid-cols-[1fr_auto]">
-    <!-- READS (left) -->
-    <section class="w-full">
-      <!-- wrapper constrains total reads width to ~two cards + gap -->
-      <div
-        class="mx-auto columns-1 lg:columns-2
-               [column-gap:1rem]
-               lg:max-w-[calc(1800px+1rem)]
-               sm:max-w-[900px]"
-      >
-        <div class="mb-4 [break-inside:avoid]">
-          <ReadPanel type="read_holding_registers" nts={currentNTS} />
+          <div class="col">
+            <div class="wrap grid gap-4 w-full max-w-[900px] mx-auto">
+              <ReadPanel type="read_coils" nts={currentNTS} />
+              <ReadPanel type="read_discrete_inputs" nts={currentNTS} />
+            </div>
+          </div>
         </div>
-        <div class="mb-4 [break-inside:avoid]">
-          <ReadPanel type="read_input_registers" nts={currentNTS} />
+      </section>
+
+      <!-- C2: WRITES (right rail only when the parent hits 1480px; stacked otherwise) -->
+      <aside class="min-w-0 w-full space-y-4 self-start min-[1480px]:sticky min-[1480px]:top-4">
+        <div class="mx-auto w-full max-w-[900px]">
+          <QuickWritePanel
+            bind:shortcuts={lib.profiles[activeProfileId].writeShortcuts}
+            nts={currentNTS}
+          />
+          <WritePanel type="write_registers" nts={currentNTS} addShortcut={AddShortcut} />
+          <WritePanel type="write_coils" nts={currentNTS} addShortcut={AddShortcut} />
         </div>
-        <div class="mb-4 [break-inside:avoid]">
-          <ReadPanel type="read_coils" nts={currentNTS} />
-        </div>
-        <div class="mb-4 [break-inside:avoid]">
-          <ReadPanel type="read_discrete_inputs" nts={currentNTS} />
-        </div>
-        <!-- add more read panels with the same wrapper -->
-      </div>
-    </section>
+      </aside>
+    </div>
+  </main>
 
-    <!-- WRITES (right) -->
-    <aside class="shrink-0 w-[clamp(700px,28vw,900px)] space-y-4 self-start lg:sticky lg:top-4">
-      <QuickWritePanel bind:shortcuts={lib.profiles[activeProfileId].writeShortcuts} nts={currentNTS} />
-      <WritePanel type="write_registers" nts={currentNTS} addShortcut={AddShortcut} />
-      <WritePanel type="write_coils" nts={currentNTS} addShortcut={AddShortcut} />
-    </aside>
-  </div>
-</main>
-<Footer />
+  <Footer />
 
+  <!-- Modal to edit name tables -->
+  <NameTableSetModal
+    bind:open={modals.nameTableOpen}
+    readNTS={(id: TAG) => $state.snapshot(lib.nameTables[id]) ?? createEmptyNameTableSet()}
+    ntsIds={Object.keys(lib.nameTables)}
+    bind:activeNtsId={lib.profiles[activeProfileId].nameTableSetId}
+    onCreate={(id: TAG) => {
+      lib = upsertNameTableSet(lib, id, createEmptyNameTableSet())
+      lib.profiles[activeProfileId].nameTableSetId = id
+    }}
+    onSave={(id: TAG, nts: NameTableSet) => {
+      lib = upsertNameTableSet(lib, id, nts)
+      lib.profiles[activeProfileId].nameTableSetId = id
+    }}
+    onDelete={(id: TAG) => {
+      lib = deleteNameTableSet(lib, id)
+      lib.profiles[activeProfileId].nameTableSetId = null
+    }}
+  />
+</div>
 
+<style>
+  /* Make the READS area respond to its own width */
+  .reads {
+    container-type: inline-size;
+  }
 
-<!-- Modal to edit name tables -->
-<NameTableSetModal
-  bind:open={modals.nameTableOpen}
-  readNTS={(id: TAG) => $state.snapshot(lib.nameTables[id]) ?? createEmptyNameTableSet()}
-  ntsIds={Object.keys(lib.nameTables)}
-  bind:activeNtsId={lib.profiles[activeProfileId].nameTableSetId}
-  onCreate={(id: TAG) => {
-    lib = upsertNameTableSet(lib, id, createEmptyNameTableSet())
-    lib.profiles[activeProfileId].nameTableSetId =  id
-  }}
-  onSave={(id: TAG, nts: NameTableSet) => {
-    lib = upsertNameTableSet(lib, id, nts)
-    lib.profiles[activeProfileId].nameTableSetId = id
-  }}
-  onDelete={(id: TAG) => {
-    lib = deleteNameTableSet(lib, id)
-    lib.profiles[activeProfileId].nameTableSetId = null
-  }}
-/>
+  /* Base: single centered column */
+  .reads-grid {
+    --gap: 1rem;
+    display: grid;
+    gap: var(--gap);
+    justify-content: center;
+    grid-template-columns: 1fr;
+  }
 
-</div>  
+  .col {
+    min-width: 0;
+  }
+
+  /* Each read column uses up to 900px and centers itself */
+  .wrap {
+    width: 100%;
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  /* When the READS container itself can fit 2×700px + gap, go 2-up.
+     1420 = 700 + 700 + ~20px gap (adjust if your gap is different). */
+  @container (min-width: 1420px) {
+    .reads-grid {
+      grid-template-columns: repeat(2, minmax(700px, 900px));
+    }
+  }
+</style>

@@ -206,7 +206,8 @@ export function fromSerializable(obj: SerializableLibrary): Library {
 // -------------------------
 // Optional localStorage helpers (caller can ignore)
 // -------------------------
-const STORAGE_KEY = "modbus:library:v1";
+export const STORAGE_VERSION = "v1";
+const STORAGE_KEY = "modbus:library:" + STORAGE_VERSION;
 
 export function saveLibrary(lib: Library) {
   try {

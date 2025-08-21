@@ -46,16 +46,20 @@
     onEditNts()
   }
   // Format long name to "REALLY_LONG_NAME..."
-  const TAG_MAX_LENGTH = 15;
+  const TAG_MAX_LENGTH = 15
   let formattedProfileId = $derived.by(() => {
-    if (!activeProfileId) return "Unnamed profile";
-    return activeProfileId.length > TAG_MAX_LENGTH ? `${activeProfileId.slice(0, TAG_MAX_LENGTH)}...` : activeProfileId;
-  });
+    if (!activeProfileId) return 'Unnamed profile'
+    return activeProfileId.length > TAG_MAX_LENGTH
+      ? `${activeProfileId.slice(0, TAG_MAX_LENGTH)}...`
+      : activeProfileId
+  })
 
   let formattedNtsTag = $derived.by(() => {
-    if (!activeNtsTag) return 'Not selected';
-    return activeNtsTag.length > TAG_MAX_LENGTH ? `${activeNtsTag.slice(0, TAG_MAX_LENGTH)}...` : activeNtsTag;
-  });
+    if (!activeNtsTag) return 'Not selected'
+    return activeNtsTag.length > TAG_MAX_LENGTH
+      ? `${activeNtsTag.slice(0, TAG_MAX_LENGTH)}...`
+      : activeNtsTag
+  })
 </script>
 
 <!-- Top menubar strip -->
@@ -88,7 +92,6 @@
       </Menubar.Content>
     </Menubar.Menu>
 
-
     <!-- Name tables menu -->
     <Menubar.Menu>
       <Menubar.Trigger>Name Tables</Menubar.Trigger>
@@ -113,7 +116,7 @@
         <Menubar.Item onclick={onEditNts}>Edit…</Menubar.Item>
       </Menubar.Content>
     </Menubar.Menu>
-        <!-- Profiles description -->
+    <!-- Profiles description -->
     <Separator orientation="vertical" />
 
     <Menubar.Menu>
@@ -128,7 +131,9 @@
               >Delete</button
             >
           </div>
-          <div class="h-3 text-xs mt-[2px]"><strong>{formattedProfileId}</strong></div>
+          <div class="h-3 text-xs mt-[2px]">
+            <strong>{formattedProfileId}</strong>
+          </div>
         </div>
       </div>
     </Menubar.Menu>
@@ -142,21 +147,26 @@
           <div class="h-3 flex items-center justify-between">
             <span class="h-3 text-xs">Selected nametable</span>
           </div>
-          <div class="h-3 text-xs mt-[2px]"><strong>{formattedNtsTag}</strong></div>
+          <div class="h-3 text-xs mt-[2px]">
+            <strong>{formattedNtsTag}</strong>
+          </div>
         </div>
       </div>
     </Menubar.Menu>
     <!-- Library status -->
     <Menubar.Menu>
       <Menubar.Separator />
-      <div class="h-9 w-[160px] pb-[2px] flex items-center px-2 ml-auto text-muted-foreground">
+      <div class="h-9 w-[240px] pb-[2px] flex items-center px-2 ml-auto text-muted-foreground">
         <Separator orientation="vertical" class="mr-4 !h-[60%]" />
 
         <!-- fixed width so it sits at the right edge, content left-aligned -->
-        <div class="w-[12rem] leading-tight text-left">
+        <div class="w-full leading-tight text-left">
           <!-- top line: left-aligned -->
           <div class="h-3 text-xs">
             Local storage {libraryDirty ? '(unsaved)' : '(saved)'}
+            <span class="w-[90px] h-3 text-xs w-[8ch] text-right">
+              <i>{lastSavedAt ? new Date(lastSavedAt).toLocaleTimeString() : ''}</i>
+            </span>
           </div>
 
           <!-- bottom line: Save left, time right (no jumping) -->
@@ -164,8 +174,14 @@
             <button onclick={onLibrarySave} class="h-3 p-0 discrete text-xs text-blue-500">
               Save
             </button>
-            <span class="w-[90px] h-3 text-xs w-[8ch] text-right">
-              <i>{lastSavedAt ? new Date(lastSavedAt).toLocaleTimeString() : ''}</i>
+            <span class="w-[100px] h-3 text-xs w-[8ch] text-right">
+              <button onclick={() => window.MB_APP?.exportLibrary()} class="h-3 p-0 discrete text-xs text-emerald-500">
+                Export
+              </button>
+            <span class="text-border">&nbsp;|&nbsp;</span>
+              <button onclick={() => window.MB_APP?.importLibraryFromFile()} class="h-3 p-0 discrete text-xs text-emerald-500">
+                Import
+              </button>
             </span>
           </div>
         </div>
