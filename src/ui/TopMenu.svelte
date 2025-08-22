@@ -160,7 +160,7 @@
     <!-- Library status -->
     <Menubar.Menu>
       <Menubar.Separator />
-      <div class="h-9 w-[240px] pb-[2px] flex items-center px-2 ml-auto text-muted-foreground">
+      <div class="h-9 w-[250px] pb-[2px] flex items-center px-2 ml-auto text-muted-foreground">
         <Separator orientation="vertical" class="mr-4 !h-[60%]" />
 
         <!-- fixed width so it sits at the right edge, content left-aligned -->
@@ -168,19 +168,19 @@
           <!-- top line: left-aligned -->
           <div class="h-3 text-xs">
             Local storage {libraryDirty ? '(unsaved)' : '(saved)'}
-            <span class="w-[90px] h-3 text-xs w-[8ch] text-right">
+            <span class="w-[90px] h-3 text-xs w-[8ch] text-right float-right">
               <i>{lastSavedAt ? new Date(lastSavedAt).toLocaleTimeString() : ''}</i>
             </span>
           </div>
 
           <!-- bottom line: Save left, time right (no jumping) -->
           <div class="h-3 mt-[2px] flex items-center justify-between">
-            <button onclick={onLibrarySave} class="h-3 p-0 discrete text-xs text-blue-500">
+            <button onclick={onLibrarySave} class="h-3 p-0 discrete text-xs text-emerald-500">
               Save
             </button>
             <span class="w-[100px] h-3 text-xs w-[8ch] text-right">
               <button onclick={onStorageManage} class="h-3 p-0 discrete text-xs text-emerald-500">
-                Manage
+                Import/Export
               </button>
             </span>
           </div>
