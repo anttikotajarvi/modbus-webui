@@ -16,17 +16,23 @@
     success: (msg: string) => {
       try {
         ;(alert as any)?.success?.(msg)
-      } catch {}
+      } catch {
+        console.error('Alert failed:', msg)
+      }
     },
     info: (msg: string) => {
       try {
         ;(alert as any)?.info?.(msg)
-      } catch {}
+      } catch {
+        console.info('Alert info failed:', msg)
+      }
     },
     error: (msg: string) => {
       try {
         ;(alert as any)?.error?.(msg)
-      } catch {}
+      } catch {
+        console.error('Alert error failed:', msg)
+      }
     },
   }
 

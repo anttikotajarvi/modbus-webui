@@ -27,10 +27,11 @@
     type NameTableSet,
   } from "@/sys/system";
   let {
+    id,
     type,
     name,
     nts,
-  }: { type: ReadFunction; name?: string; nts: NameTableSet } = $props();
+  }: { id: string; type: ReadFunction; name?: string; nts: NameTableSet } = $props();
 
   let lastRes = $state<ReadResponse | null>(null);
   let errorMsg = $state<string | null>(null);
@@ -102,6 +103,7 @@
   let addressResolved = $derived(
     nameBucket.get(settings.queryTemplate.address)
   );
+
 </script>
 
 <Collapsible.Root class="w-full">
@@ -120,9 +122,10 @@
       <!-- ADDRESS -->
       <form class="flex flex-wrap items-end gap-3" onsubmit={refreshData}>
         <div class="flex max-w-sm flex-col gap-1.5">
-          <Label for="address" class="text-muted-foreground">Address</Label>
+          <Label for={id + "-read-panel-address"} class="text-muted-foreground">Address</Label>
           <div style="position: relative;">
             <HexInput
+              id={id + "-read-panel-address"}
               bind:value={settings.queryTemplate.address}
               max={0xffff}
               display="auto"
@@ -145,9 +148,9 @@
         </div>
         <!-- QUANTITY -->
         <div class="flex max-w-sm flex-col gap-1.5">
-          <Label for="quantity" class="text-muted-foreground">Quantity</Label>
+          <Label for={id + "-read-panel-quantity"} class="text-muted-foreground">Quantity</Label>
           <Input
-            id="quantity"
+            id={id + "-read-panel-quantity"}
             type="number"
             min="1"
             bind:value={settings.queryTemplate.quantity}
@@ -157,11 +160,11 @@
         <!-- INTERVAL -->
         <div class="flex max-w-sm flex-col gap-1.5">
           <Label for="interval" class="text-muted-foreground">
-            <Checkbox id="autorefresh" bind:checked={settings.autoRefresh} />
-            <Label for="autorefresh">Auto refresh</Label>
+            <Checkbox id={id + "-read-panel-autorefresh"} bind:checked={settings.autoRefresh} />
+            <Label for={id + "-read-panel-autorefresh"}>Auto refresh</Label>
           </Label>
           <Input
-            id="interval"
+            id={id + "-read-panel-interval"}
             type="number"
             min="100"
             bind:value={settings.autoRefreshInterval}
@@ -172,6 +175,7 @@
         <!-- REFRESH AND COLLAPSE -->
         <div class="flex items-center gap-1.5">
           <Button
+            id={id + "-read-panel-refresh"}
             variant="ghost"
             size="icon"
             onclick={refreshData}
@@ -182,6 +186,7 @@
 
           <Collapsible.Trigger>
             <Button
+              id={id + "-read-panel-collapse"}
               variant="ghost"
               size="icon"
               aria-label={open ? "Minimize" : "Maximize"}

@@ -1,5 +1,6 @@
 <script lang="ts">
   type Props = {
+    id?: string;
     value?: boolean[];
     placeholder?: string;
     class?: string;
@@ -9,6 +10,7 @@
   };
 
   let {
+    id = undefined,
     value = $bindable<boolean[]>([]),
     placeholder = "0 or 1 (true/false)",
     class: className = "",
@@ -90,8 +92,10 @@
 <label
   class={`flex items-center gap-2 rounded-md border bg-background px-2 py-1 text-sm shadow-sm focus-within:ring-2 focus-within:ring-ring ${className}`}
   aria-label="Boolean values"
+  for={id}
 >
   <input
+    id={id}
     bind:this={inputEl}
     class={`flex-1 min-w-[6ch] border-0 bg-transparent p-0 outline-none placeholder:text-muted-foreground ${inputClass}`}
     type="text"

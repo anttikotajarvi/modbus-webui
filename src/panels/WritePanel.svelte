@@ -18,10 +18,12 @@
   import HexInput from "@/generics/custom-input/HexInput.svelte";
 
   let {
+    id,
     type,
     nts,
     addShortcut,
   }: {
+    id: string;
     type: WriteFunction;
     nts: NameTableSet;
     addShortcut: (name: string, query: WriteQuery) => void;
@@ -167,11 +169,12 @@
 
       <form class="flex flex-wrap items-end gap-3" onsubmit={writeData}>
         <div class="flex max-w-sm flex-col gap-1.5">
-          <Label for="address" class="text-muted-foreground"
+          <Label for={id + "-write-panel-address"} class="text-muted-foreground"
             >Start Address</Label
           >
           <div style="position: relative;">
             <HexInput
+              id={id + "-write-panel-address"}
               bind:value={address}
               max={0xffff}
               display="auto"
@@ -190,15 +193,17 @@
         </div>
 
         <div class="flex max-w-sm flex-col gap-1.5">
-          <Label for="values" class="text-muted-foreground">Add values</Label>
+          <Label for={id + "-write-panel-values"} class="text-muted-foreground">Add values</Label>
           {#if type === "write_coils"}
             <BinaryArrayInput
+              id={id + "-write-panel-values"}
               bind:value={bitValues}
               class="h-9 w-40"
               inputClass="w-full"
             />
           {:else if type === "write_registers"}
             <HexArrayInput
+              id={id + "-write-panel-values"}
               bind:value={wordValues}
               max={0xffff}
               display="auto"
@@ -209,10 +214,11 @@
         </div>
 
         <div class="flex items-center gap-1.5">
-          <Button onclick={writeData} aria-label="write">Write</Button>
+          <Button id={id + "-write-panel-submit"} onclick={writeData} aria-label="write">Write</Button>
 
           <Collapsible.Trigger>
             <Button
+
               variant="ghost"
               size="icon"
               aria-label={open ? "Minimize" : "Maximize"}
@@ -334,11 +340,11 @@
 
         <div class="flex items-end gap-3 pt-4">
           <div class="flex flex-col gap-1.5">
-            <Label for="shortcutName" class="text-muted-foreground"
+            <Label for={id + "-write-panel-shortcut-name"} class="text-muted-foreground"
               >Shortcut name</Label
             >
             <TagInput
-              id="shortcutName"
+              id={id + "-write-panel-shortcut-name"}
               placeholder="RESTART_SYSTEM"
               bind:value={shortcutName}
               class="w-64"
@@ -346,6 +352,7 @@
           </div>
 
           <Button
+            id={id + "-write-panel-save-shortcut"}
             onclick={saveShortcut}
             aria-label="Save write as shortcut"
             disabled={rightValues.length === 0}
