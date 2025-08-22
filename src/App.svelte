@@ -437,15 +437,15 @@
         <div class="reads-grid">
           <div class="col">
             <div class="wrap grid gap-4 w-full max-w-[900px] mx-auto">
-              <ReadPanel type="read_holding_registers" nts={currentNTS} />
-              <ReadPanel type="read_input_registers" nts={currentNTS} />
+              <ReadPanel id="rp-hr" type="read_holding_registers" nts={currentNTS} />
+              <ReadPanel id="rp-ir" type="read_input_registers" nts={currentNTS} />
             </div>
           </div>
 
           <div class="col">
             <div class="wrap grid gap-4 w-full max-w-[900px] mx-auto">
-              <ReadPanel type="read_coils" nts={currentNTS} />
-              <ReadPanel type="read_discrete_inputs" nts={currentNTS} />
+              <ReadPanel id="rp-c" type="read_coils" nts={currentNTS} />
+              <ReadPanel id="rp-di" type="read_discrete_inputs" nts={currentNTS} />
             </div>
           </div>
         </div>
@@ -458,8 +458,8 @@
             bind:shortcuts={lib.profiles[activeProfileId].writeShortcuts}
             nts={currentNTS}
           />
-          <WritePanel type="write_registers" nts={currentNTS} addShortcut={AddShortcut} />
-          <WritePanel type="write_coils" nts={currentNTS} addShortcut={AddShortcut} />
+          <WritePanel id="wp-hr" type="write_registers" nts={currentNTS} addShortcut={AddShortcut} />
+          <WritePanel id="wp-c" type="write_coils" nts={currentNTS} addShortcut={AddShortcut} />
         </div>
       </aside>
     </div>
