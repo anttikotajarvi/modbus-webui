@@ -20,6 +20,9 @@
     libraryDirty,
     onLibrarySave,
     lastSavedAt,
+
+    // Storage
+    onStorageManage // TODO: should use context or stores for modals
   }: {
     ntsTags: TAG[]
     activeNtsTag: TAG | null
@@ -32,6 +35,7 @@
     libraryDirty: boolean
     onLibrarySave: () => void
     lastSavedAt: number | null
+    onStorageManage: () => void
   } = $props()
 
   // Local UI
@@ -175,12 +179,8 @@
               Save
             </button>
             <span class="w-[100px] h-3 text-xs w-[8ch] text-right">
-              <button onclick={() => window.MB_APP?.exportLibrary()} class="h-3 p-0 discrete text-xs text-emerald-500">
-                Export
-              </button>
-            <span class="text-border">&nbsp;|&nbsp;</span>
-              <button onclick={() => window.MB_APP?.importLibraryFromFile()} class="h-3 p-0 discrete text-xs text-emerald-500">
-                Import
+              <button onclick={onStorageManage} class="h-3 p-0 discrete text-xs text-emerald-500">
+                Manage
               </button>
             </span>
           </div>

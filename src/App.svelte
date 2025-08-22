@@ -43,7 +43,12 @@
     },
 
     exportLibrary: () => {
-      const data = JSON.stringify($state.snapshot(lib), null, 2)
+      // Data straight from localStorage
+      const data = loadRawLibrary()
+      if (!data) {
+        sa.error('No data to export. Library is empty.')
+        return
+      }
       const blob = new Blob([data], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -249,13 +254,16 @@
     loadLibrary,
     saveLibrary,
     STORAGE_VERSION,
-  } from './sys/system'
+    loadRawLibrary,
+    fromSerializable,
+    type SerializableLibrary,
+  } from '@/sys/system'
   import CreateProfileModal from '@/ui/CreateProfileModal.svelte'
   import { debounce } from '@/sys/generic'
   import NameTableSetModal from '@/ui/NameTableSetModal.svelte'
   import SystemAlert from '@/ui/alert/SystemAlert.svelte'
 
-  let modals = $state({ addProfileOpen: false, nameTableOpen: false })
+  let modals = $state({ addProfileOpen: false, nameTableOpen: false, manageStorageOpen: false });
 
   // -------------------------
   // Profile management
@@ -378,6 +386,7 @@
   import { useAlert } from '@/ui/alert/context'
   import QuickWritePanel from '@/panels/QuickWritePanel.svelte'
   import Footer from './ui/Footer.svelte'
+  import ManageStorageModal from './ui/ManageStorageModal.svelte'
   const alert = useAlert()
 </script>
 
@@ -403,6 +412,7 @@
     {libraryDirty}
     onLibrarySave={PersistLibrary}
     {lastSavedAt}
+    onStorageManage={() => (modals.manageStorageOpen = true)}
   />
 
   <ConnectForm
@@ -448,7 +458,6 @@
       </aside>
     </div>
   </main>
-
   <Footer />
 
   <!-- Modal to edit name tables -->
@@ -470,6 +479,16 @@
       lib.profiles[activeProfileId].nameTableSetId = null
     }}
   />
+  <!-- Modal to manage storage (import/export) -->
+  <ManageStorageModal
+    bind:open={modals.manageStorageOpen}
+    current={lib}
+    onExport={() => consoleCommands.exportLibrary()}
+    onImport={(libSer: SerializableLibrary) => {
+      lib = fromSerializable($state.snapshot(libSer) as SerializableLibrary);
+      saveLibrary(lib);
+      alert.success('Storage imported successfully.')
+    }} />
 </div>
 
 <style>
