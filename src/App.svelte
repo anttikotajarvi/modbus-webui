@@ -447,7 +447,7 @@
 
       <!-- C2: WRITES (right rail only when the parent hits 1480px; stacked otherwise) -->
       <aside class="min-w-0 w-full space-y-4 self-start min-[1480px]:sticky min-[1480px]:top-4">
-        <div class="mx-auto w-full max-w-[900px]">
+        <div class="mx-auto w-full max-w-[900px] grid gap-4">
           <QuickWritePanel
             bind:shortcuts={lib.profiles[activeProfileId].writeShortcuts}
             nts={currentNTS}
