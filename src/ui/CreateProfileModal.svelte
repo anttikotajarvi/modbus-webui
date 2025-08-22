@@ -72,11 +72,11 @@
     <div class="w-full max-w-[500px]">
       <div class="grid grid-cols-[120px,1fr] gap-x-4 gap-y-3 py-2">
         <!-- Profile ID -->
-        <Label for="profileId" class="justify-self-end self-center text-right"
+        <Label for="create-profile-id" class="justify-self-end self-center text-right"
           >Profile ID</Label
         >
         <TagInput
-          id="profileId"
+          id="create-profile-id"
           placeholder="PROFILE_IDENTIFIER"
           bind:value={newId}
           class="w-full"
@@ -93,11 +93,11 @@
 
         <!-- Template -->
         <Label
-          for="template"
+          for="create-profile-template"
           class="justify-self-end self-start pt-1 text-right">Template</Label
         >
         <RadioGroup.Root
-          id="template"
+          id="create-profile-template"
           bind:value={template}
           class="flex flex-col gap-2"
         >
@@ -113,6 +113,7 @@
     </div>
     <Dialog.Footer>
       <Button
+        id="create-profile-cancel"
         disabled={!newIdValidity.valid}
         variant="secondary"
         onclick={(e) => {

@@ -8,7 +8,6 @@
   import * as RadioGroup from '$lib/components/ui/radio-group'
 
   import {
-  createEmptyLibrary,
     type Library,
     libraryTemplate,
     type SerializableLibrary,
@@ -117,7 +116,7 @@
     try {
       // @ts-expect-error: not universally typed
       if (window.showOpenFilePicker) {
-        // @ts-expect-error
+        // @ts-expect-error: not universally typed
         const [handle] = await window.showOpenFilePicker({
           types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
           multiple: false,
@@ -193,16 +192,17 @@
     <!-- Import row -->
     <div class="flex flex-wrap items-end gap-2">
       <div class="flex items-center gap-2">
-        <Button variant="secondary" class="h-8 px-3 text-xs" onclick={PickFile}>Pick JSON</Button>
+        <Button id="manage-storage-pick-json" variant="secondary" class="h-8 px-3 text-xs" onclick={PickFile}>Pick JSON</Button>
         <Input
+          id="manage-storage-file-input"
           bind:this={fileInput}
           class="hidden"
           type="file"
           accept="application/json,.json"
           onchange={onFileChange}
         />
-        <Button variant="outline" class="h-8 px-3 text-xs" onclick={onExport}>Export current</Button>
-        <Button variant="ghost" class="h-8 px-3 text-xs" onclick={ResetLoaded}>Clear</Button>
+        <Button id="manage-storage-export" variant="outline" class="h-8 px-3 text-xs" onclick={onExport}>Export current</Button>
+        <Button id="manage-storage-clear" variant="ghost" class="h-8 px-3 text-xs" onclick={ResetLoaded}>Clear</Button>
       </div>
       <div class="ml-auto text-xs text-muted-foreground">
         Current: {statsCur(current).profiles} profiles • {statsCur(current).sets} name-table sets
@@ -210,8 +210,9 @@
     </div>
 
     <div class="mt-2">
-      <Label class="text-xs mb-1 block">Paste JSON</Label>
+      <Label for="manage-storage-json-field" class="text-xs mb-1 block">Paste JSON</Label>
       <Textarea
+        id="manage-storage-json-field"
         class="h-28 resize-y font-mono text-xs"
         placeholder="…or paste exported library JSON here"
         bind:value={newRaw}
@@ -222,7 +223,7 @@
           {loadError}
         </div>
       {/if}
-    <button onclick={LoadTemplate} class="discrete text-xs m-1 ml-auto text-blue-500 float-right">Load library template</button>
+    <button id="manage-storage-load-template" onclick={LoadTemplate} class="discrete text-xs m-1 ml-auto text-blue-500 float-right">Load library template</button>
 
     </div>
     <Separator class="my-4" />
@@ -231,12 +232,12 @@
     <div class="space-y-3">
       <RadioGroup.Root class="flex flex-wrap gap-6 text-sm" bind:value={mode}>
         <div class="flex items-center gap-2">
-          <RadioGroup.Item id="mode-replace" value="replace" />
-          <Label for="mode-replace">Replace current library</Label>
+          <RadioGroup.Item id="manage-storage-mode-replace" value="replace" />
+          <Label for="manage-storage-mode-replace">Replace current library</Label>
         </div>
         <div class="flex items-center gap-2">
-          <RadioGroup.Item id="mode-merge" value="merge" disabled={!loaded} />
-          <Label for="mode-merge" class={!loaded ? 'opacity-50' : ''}>Merge libraries</Label>
+          <RadioGroup.Item id="manage-storage-mode-merge" value="merge" disabled={!loaded} />
+          <Label for="manage-storage-mode-merge" class={!loaded ? 'opacity-50' : ''}>Merge libraries</Label>
         </div>
       </RadioGroup.Root>
 
@@ -255,8 +256,8 @@
             <div class="text-sm font-medium">Profiles</div>
             {#if conflicts.profiles.length}
               <div class="flex items-center gap-2">
-                <Button variant="outline" class="h-7 px-2 text-xs" onclick={() => ChooseAll('current','profiles')}>Keep current</Button>
-                <Button variant="outline" class="h-7 px-2 text-xs" onclick={() => ChooseAll('new','profiles')}>Use new</Button>
+                <Button id="manage-storage-keep-current" variant="outline" class="h-7 px-2 text-xs" onclick={() => ChooseAll('current','profiles')}>Keep current</Button>
+                <Button id="manage-storage-use-new" variant="outline" class="h-7 px-2 text-xs" onclick={() => ChooseAll('new','profiles')}>Use new</Button>
               </div>
             {/if}
           </div>
@@ -268,7 +269,7 @@
                 <div class="opacity-60">No profile name conflicts.</div>
               {:else}
                 <ul class="divide-y">
-                  {#each conflicts.profiles as k}
+                  {#each conflicts.profiles as k (k)}
                     <li class="flex items-center justify-between gap-3 py-1">
                       <div class="truncate font-mono">{k}</div>
                       <RadioGroup.Root class="flex items-center gap-3" bind:value={choices.profiles[k]}>
@@ -295,8 +296,8 @@
             <div class="text-sm font-medium">Name table sets</div>
             {#if conflicts.sets.length}
               <div class="flex items-center gap-2">
-                <Button variant="outline" class="h-7 px-2 text-xs" onclick={() => ChooseAll('current','sets')}>Keep current</Button>
-                <Button variant="outline" class="h-7 px-2 text-xs" onclick={() => ChooseAll('new','sets')}>Use new</Button>
+                <Button id="manage-storage-keep-all-current" variant="outline" class="h-7 px-2 text-xs" onclick={() => ChooseAll('current','sets')}>Keep current</Button>
+                <Button id="manage-storage-use-all-new" variant="outline" class="h-7 px-2 text-xs" onclick={() => ChooseAll('new','sets')}>Use new</Button>
               </div>
             {/if}
           </div>
@@ -308,7 +309,7 @@
                 <div class="opacity-60">No name-table conflicts.</div>
               {:else}
                 <ul class="divide-y">
-                  {#each conflicts.sets as k}
+                  {#each conflicts.sets as k (k)}
                     <li class="flex items-center justify-between gap-3 py-1">
                       <div class="truncate font-mono">{k}</div>
                       <RadioGroup.Root class="flex items-center gap-3" bind:value={choices.sets[k]}>
@@ -333,9 +334,9 @@
 
     <Dialog.Footer class="mt-4">
       <Dialog.Close>
-        <Button variant="outline" class="h-8 px-3 text-xs">Cancel</Button>
+        <Button id="manage-storage-cancel" variant="outline" class="h-8 px-3 text-xs">Cancel</Button>
       </Dialog.Close>
-      <Button class="h-8 px-3 text-xs" disabled={!loaded} onclick={Apply}>
+      <Button id="manage-storage-apply" class="h-8 px-3 text-xs" disabled={!loaded} onclick={Apply}>
         {mode === 'replace' ? 'Replace' : 'Apply merge'}
       </Button>
     </Dialog.Footer>

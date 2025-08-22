@@ -91,21 +91,21 @@
       <fieldset {disabled} class="contents">
         <!-- DEVICE ID -->
         <div class="flex max-w-sm flex-col gap-1.5">
-          <Label for="dev" class="text-xs text-muted-foreground">Device ID</Label>
-          <Input id="dev" type="number" min="0" max="255" bind:value={settings.deviceId} class="h-9 w-24" />
+          <Label for="connect-device-id" class="text-xs text-muted-foreground">Device ID</Label>
+          <Input id="connect-device-id" type="number" min="0" max="255" bind:value={settings.deviceId} class="h-9 w-24" />
         </div>
 
         <!-- BAUD RATE -->
         <div class="flex max-w-sm flex-col gap-1.5">
-          <Label for="baud" class="text-xs text-muted-foreground">Baud rate</Label>
-          <Input id="baud" type="number" min="1200" step="100" bind:value={settings.options.baudRate} class="h-9 w-28" />
+          <Label for="connect-baud-rate" class="text-xs text-muted-foreground">Baud rate</Label>
+          <Input id="connect-baud-rate" type="number" min="1200" step="100" bind:value={settings.options.baudRate} class="h-9 w-28" />
         </div>
 
         <!-- DATA BITS -->
         <div class="flex min-w-[20px] flex-col gap-1.5">
-          <Label class="text-xs text-muted-foreground">Data bits</Label>
+          <Label for="connect-data-bits" class="text-xs text-muted-foreground">Data bits</Label>
           <Select.Root type="single" bind:value={sDataBits}>
-            <Select.Trigger class="h-9 capitalize">{sDataBits}</Select.Trigger>
+            <Select.Trigger id="connect-data-bits" class="h-9 capitalize">{sDataBits}</Select.Trigger>
             <Select.Content>
               <Select.Item value="7">7</Select.Item>
               <Select.Item value="8">8</Select.Item>
@@ -115,9 +115,9 @@
 
         <!-- PARITY -->
         <div class="flex min-w-[20px] flex-col gap-1.5">
-          <Label class="text-xs text-muted-foreground">Parity</Label>
+          <Label for="connect-parity" class="text-xs text-muted-foreground">Parity</Label>
           <Select.Root type="single" bind:value={parity}>
-            <Select.Trigger class="h-9 capitalize">{parity}</Select.Trigger>
+            <Select.Trigger id="connect-parity" class="h-9 capitalize">{parity}</Select.Trigger>
             <Select.Content>
               <Select.Item value="none">none</Select.Item>
               <Select.Item value="even">even</Select.Item>
@@ -128,9 +128,9 @@
 
         <!-- STOP BITS -->
         <div class="flex min-w-[20px] flex-col gap-1.5">
-          <Label class="text-xs text-muted-foreground">Stop bits</Label>
+          <Label for="connect-stop-bits" class="text-xs text-muted-foreground">Stop bits</Label>
           <Select.Root type="single" bind:value={sStopBits}>
-            <Select.Trigger class="h-9 capitalize">{sStopBits}</Select.Trigger>
+            <Select.Trigger id="connect-stop-bits" class="h-9 capitalize">{sStopBits}</Select.Trigger>
             <Select.Content>
               <Select.Item value="1">1</Select.Item>
               <Select.Item value="2">2</Select.Item>
@@ -142,9 +142,9 @@
       <div class="flex min-w-[20px] flex-col gap-1.5">
         <span class="text-xs">&nbsp;</span>
         {#if status.status === "connected"}
-          <Button variant="outline" class="h-9" onclick={ondisconnect} disabled={false}>Disconnect</Button>
+          <Button id="connect-disconnect" variant="outline" class="h-9" onclick={ondisconnect} disabled={false}>Disconnect</Button>
         {:else}
-          <Button type="submit" class="h-9">Connect</Button>
+          <Button id="connect-submit" type="submit" class="h-9">Connect</Button>
         {/if}
       </div>
     </form>

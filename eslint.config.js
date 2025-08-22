@@ -3,13 +3,13 @@ import js from "@eslint/js";
 import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 import ts from "typescript-eslint";
-import svelteConfig from "./svelte.config.js"; // if you have one
+import svelteConfig from "./svelte.config.js";
 
-/** @type {import('eslint').Linter.Config[]} */
-export default ts.config(
+/** @type {import('eslint').Linter.FlatConfig[]} */
+const base = ts.config(
   js.configs.recommended,
-  ...ts.configs.recommended, // TS core rules
-  ...svelte.configs.recommended, // Svelte rules (Svelte 5 ready)
+  ...ts.configs.recommended,          // TS core rules
+  ...svelte.configs.recommended,      // Svelte rules
   {
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
@@ -46,3 +46,17 @@ export default ts.config(
     },
   }
 );
+
+// Limit every block to src/. If a block already has `files`, prefix them with `src/`.
+const scoped = base.map(cfg => ({
+  ...cfg,
+  files: cfg.files
+    ? cfg.files.map(p => `src/${p.replace(/^\/+/, "")}`)
+    : ["src/**/*.{js,cjs,mjs,ts,cts,mts,svelte}"],
+}));
+
+export default [
+  // Optional ignores
+  { ignores: ["**/node_modules/**", "**/dist/**", "**/build/**"] },
+  ...scoped,
+];
