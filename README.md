@@ -2,6 +2,8 @@
 
 Single-file Modbus workbench — profiles, name tables, shortcuts.
 
+[![npm](https://img.shields.io/npm/v/modbus-webui)](https://www.npmjs.com/package/modbus-webui)
+
 ## What it is
 
 A browser-based UI for Modbus devices. Runs fully client-side via the [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API) and [modbus-webserial](https://www.npmjs.com/package/modbus-webserial). No install required to use the app; optional CLI for quick start. \
