@@ -1,0 +1,9 @@
+Manual adjustments required before deployment:
+
+- Replace https://example.com with the real site URL in modbus-webui.html, sitemap.xml, robots.txt, and JSON-LD.
+- Update Open Graph/Twitter image URLs.
+- Provide the actual Twitter handles for `twitter:site` and `twitter:creator`.
+- Substitute the Google Analytics ID `G-XXXXXXXXXX` with the real measurement ID.
+- Replace placeholder icon files in public/ (favicon.ico, icon-192.png, icon-512.png) with production assets.
+- Adjust manifest.webmanifest fields as needed (name, short_name, colors).
+- Verify og:locale and theme color values match the site.

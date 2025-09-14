@@ -6,7 +6,10 @@ import path from "path";
 import pkg from "./package.json" with { type: "json" };
 
 export default defineConfig({
-  define: { "import.meta.env.VITE_APP_VERSION": JSON.stringify(pkg.version) },
+  define: {
+    "import.meta.env.VITE_APP_VERSION": JSON.stringify(pkg.version),
+    "import.meta.env.VITE_GH_PAGES": JSON.stringify(process.env.VITE_GH_PAGES ?? ""),
+  },
   plugins: [
     tailwindcss(),
     svelte({
