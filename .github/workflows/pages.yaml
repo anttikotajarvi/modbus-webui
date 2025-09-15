@@ -24,7 +24,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run build   # must produce dist/modbus-webui.html
+      - run: npm run build:gh-pages   # must produce dist/modbus-webui.html
       - name: Prepare Pages artifact
         run: |
           mkdir out

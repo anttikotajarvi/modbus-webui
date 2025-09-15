@@ -1,6 +1,6 @@
 {
   "name": "modbus-webui",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "type": "module",
   "bin": {
     "modbus-webui": "bin/cli.mjs"
@@ -26,6 +26,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:gh-pages": "VITE_GH_PAGES=1 vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint ."
