@@ -7,8 +7,8 @@
     <script type="module">
       if (import.meta.env.VITE_GH_PAGES) {
         const linkTags = [
-          { rel: "canonical", href: "https://example.com" },
-          { rel: "icon", href: "/favicon.ico" },
+          { rel: "canonical", href: import.meta.env.URL },
+          { rel: "icon", type:"image/svg+xml", href: "/favicon.svg" },
           { rel: "apple-touch-icon", href: "/icon-192.png" },
           { rel: "manifest", href: "/manifest.webmanifest" },
         ];
@@ -17,7 +17,7 @@
           Object.entries(attrs).forEach(([k, v]) => link.setAttribute(k, v));
           document.head.appendChild(link);
         });
-
+        const url = "https://anttikotajarvi.github.io/modbus-webui";
         const metaTags = [
           {
             name: "description",
@@ -36,9 +36,9 @@
             content:
               "Single-file Modbus Web UI with profiles, name tables, and shortcuts",
           },
-          { property: "og:url", content: "https://example.com" },
+          { property: "og:url", content: url },
           { property: "og:type", content: "website" },
-          { property: "og:image", content: "https://example.com/og-image.png" },
+          { property: "og:image", content: `${url}/og-image.png` },
           { name: "twitter:card", content: "summary_large_image" },
           { name: "twitter:title", content: "Modbus WebUI" },
           {
@@ -46,12 +46,8 @@
             content:
               "Single-file Modbus Web UI with profiles, name tables, and shortcuts",
           },
-          {
-            name: "twitter:image",
-            content: "https://example.com/og-image.png",
-          },
-          { name: "twitter:site", content: "@YourTwitterHandle" },
-          { name: "twitter:creator", content: "@MaintainerHandle" },
+          { name: "twitter:site", content: "@anttikotajarvi" },
+          { name: "twitter:creator", content: "@anttikotajarvi" },
         ];
         metaTags.forEach((attrs) => {
           const meta = document.createElement("meta");
@@ -65,20 +61,20 @@
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "Modbus WebUI",
-          url: "https://example.com",
+          url: url,
         });
         document.head.appendChild(ldScript);
         const gaScript = document.createElement("script");
         gaScript.async = true;
         gaScript.src =
-          "https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX";
+          "https://www.googletagmanager.com/gtag/js?id=G-0HFN4G088N";
         document.head.appendChild(gaScript);
         const gaInit = document.createElement("script");
         gaInit.innerHTML = `
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-XXXXXXXXXX');
+          gtag('config', 'G-0HFN4G088N');
         `;
         document.head.appendChild(gaInit);
       }
