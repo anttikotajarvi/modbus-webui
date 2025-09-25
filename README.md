@@ -2,6 +2,7 @@
 
 Single-file Modbus workbench — profiles, name tables, shortcuts.
 
+[![Mentioned in Awesome](https://awesome.re/mentioned-badge.svg)](https://github.com/louisfoster/awesome-web-serial#applications)
 [![npm](https://img.shields.io/npm/v/modbus-webui)](https://www.npmjs.com/package/modbus-webui)
 
 ## What it is
