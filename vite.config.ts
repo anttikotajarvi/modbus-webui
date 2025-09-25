@@ -5,7 +5,7 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 import path from "path";
 import pkg from "./package.json" with { type: "json" };
 
-const isDeployment = Boolean(process.env.VITE_GH_PAGES) ?? false;
+const isDeployment = Boolean(process.env.VITE_GH_PAGES);
 const siteURL = "https://anttikotajarvi.github.io/modbus-webui/"
 const githubURL = "https://github.com/anttikotajarvi/modbus-webui"
 
