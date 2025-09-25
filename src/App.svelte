@@ -8,6 +8,7 @@
   import { onMount, setContext } from 'svelte'
   import WritePanel from '@/panels/WritePanel.svelte'
   import TopMenu from '@/ui/TopMenu.svelte'
+  
   // ------------------------
   // Console commands
   // ------------------------
@@ -391,7 +392,6 @@
 
   import { useAlert } from '@/ui/alert/context'
   import QuickWritePanel from '@/panels/QuickWritePanel.svelte'
-  import Footer from './ui/Footer.svelte'
   import ManageStorageModal from './ui/ManageStorageModal.svelte'
   const alert = useAlert()
 </script>
@@ -464,7 +464,6 @@
       </aside>
     </div>
   </main>
-  <Footer />
 
   <!-- Modal to edit name tables -->
   <NameTableSetModal
