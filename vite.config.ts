@@ -7,7 +7,7 @@ import pkg from "./package.json" with { type: "json" };
 
 const isDeployment = Boolean(process.env.VITE_GH_PAGES);
 const siteURL = "https://anttikotajarvi.github.io/modbus-webui/"
-const githubURL = "https://github.com/anttikotajarvi/modbus-webui"
+const githubURL = "https://github.com/anttikotajarvi/modbus-webui";
 
 export default defineConfig({
   define: {
