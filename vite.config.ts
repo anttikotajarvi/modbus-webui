@@ -5,6 +5,10 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 import path from "path";
 import pkg from "./package.json" with { type: "json" };
 
+const isDeployment = Boolean(process.env.VITE_GH_PAGES) ?? false;
+const siteURL = "https://anttikotajarvi.github.io/modbus-webui/"
+const githubURL = "https://github.com/anttikotajarvi/modbus-webui"
+
 export default defineConfig({
   define: {
     "import.meta.env.VITE_APP_VERSION": JSON.stringify(pkg.version),
@@ -23,7 +27,14 @@ export default defineConfig({
     }), // Svelte 5 compiler
 
     // Inject static SEO tags into <head> at build time
-    createSeoHeadInjector(),
+    isDeployment ? createSeoHeadInjector() : null,
+    
+    createHtmlTokenReplace({ // This is mainly used for the footer.
+      APP_VERSION: pkg.version,
+      SITE_URL: siteURL,
+      GITHUB_URL: githubURL
+    }),
+    
 
     viteSingleFile(), // inline JS & CSS → one HTML file
   ],
@@ -48,7 +59,7 @@ export default defineConfig({
   },
 });
 
-/** ---------- SEO head injector (build-time) ---------- */
+// SEO head injector (build-time)
 function createSeoHeadInjector(): Plugin {
   return {
     name: "seo-head-injector",
@@ -118,6 +129,40 @@ function createSeoHeadInjector(): Plugin {
 
       // Return unchanged HTML plus injected tags
       return { html, tags };
+    },
+  };
+}
+
+/**
+ * Replace %TOKENS% inside index.html at build time.
+ * Usage: createHtmlTokenReplace({ APP_VERSION: "1.0.2" })
+ * By default it looks for %KEY% (e.g., %APP_VERSION%), but you can change the delimiters.
+ */
+function createHtmlTokenReplace(
+  tokens: Record<string, string>,
+  opts: { delimStart?: string; delimEnd?: string } = {}
+): Plugin {
+  const { delimStart = "%", delimEnd = "%" } = opts;
+
+  // Escape for RegExp
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  // Build a single regex like /%(APP_VERSION|SITE_URL)%/g
+  const keys = Object.keys(tokens);
+  const pattern =
+    keys.length > 0
+      ? new RegExp(
+          `${esc(delimStart)}(${keys.map(esc).join("|")})${esc(delimEnd)}`,
+          "g"
+        )
+      : null;
+
+  return {
+    name: "html-token-replace",
+    apply: "build",
+    transformIndexHtml(html) {
+      if (!pattern) return html;
+      return html.replace(pattern, (_m, key: string) => tokens[key] ?? _m);
     },
   };
 }
