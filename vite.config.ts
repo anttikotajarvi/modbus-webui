@@ -66,7 +66,7 @@ function createSeoHeadInjector(): Plugin {
     transformIndexHtml(html): IndexHtmlTransformResult {
       const SITE_URL =
         process.env.VITE_SITE_URL ||
-        "https://anttikotajarvi.github.io/modbus-webui/";
+        siteURL;
       const GA_ID = process.env.VITE_GA_ID || "G-0HFN4G088N";
 
       // Ensure SITE_URL ends with a slash for simple concatenation
