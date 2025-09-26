@@ -9,6 +9,7 @@ import App from './App.svelte'
         exportLibrary: () => void;
         importLibrary: (json: string) => void;
         importLibraryFromFile: () => void;
+        importFromLegacy: () => void;
       };
     }
   }
