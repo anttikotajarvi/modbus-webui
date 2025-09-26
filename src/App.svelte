@@ -124,7 +124,7 @@
       }
     },
     importFromLegacy: async () => {
-      const LEGACY_EXPORTER_URL = new URL('http://127.0.0.1:8080') //"https://anttikotajarvi.github.io/modbus-webui-legacy-export/")
+      const LEGACY_EXPORTER_URL = new URL("https://anttikotajarvi.github.io/modbus-webui-legacy-export/");
       const popup = window.open(LEGACY_EXPORTER_URL.href, '_blank', 'width=640,height=800')
       window.addEventListener(
         'message',
