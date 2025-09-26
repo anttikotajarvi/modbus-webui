@@ -65,21 +65,13 @@ function createSeoHeadInjector(): Plugin {
     name: "seo-head-injector",
     transformIndexHtml(html): IndexHtmlTransformResult {
       const SITE_URL = process.env.VITE_SITE_URL || siteURL;
-
-      // Content strings (Option 1: add technical keywords)
-      const DESC =
-        "Browser-based Modbus RTU client over RS-485 via Web Serial (USB-to-RS485). Profiles, name tables, and write shortcuts.";
-      const KEYWORDS =
-        "modbus,modbus rtu,rs-485,rs485,web serial,usb-to-rs485,serial,modbus client,modbus master,automation";
-
       const GA_ID = process.env.VITE_GA_ID || "G-0HFN4G088N";
 
-      // Ensure SITE_URL ends with a slash for simple concatenation
       const withSlash = SITE_URL.replace(/\/?$/, "/");
       const asset = (p: string) => `${withSlash}${p}`.replace(/([^:]\/)\/+/g, "$1");
 
-      // Single social image you provide
-      const OG_IMAGE = asset("og-1200-630.png");
+      const KEYWORDS =
+        "modbus,webui,automation,modbus rtu,rs-485,rs485,web serial,usb-to-rs485,modbus client,modbus master,serial";
 
       const tags = [
         // Canonical + icons + PWA
@@ -88,9 +80,9 @@ function createSeoHeadInjector(): Plugin {
         { tag: "link", attrs: { rel: "apple-touch-icon", href: asset("icon-192.png") } },
         { tag: "link", attrs: { rel: "manifest", href: asset("manifest.webmanifest") } },
 
-        // Core meta (with stronger robots + technical keywords)
-        { tag: "meta", attrs: { name: "description", content: DESC } },
-        { tag: "meta", attrs: { name: "robots", content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" } },
+        // Core meta
+        { tag: "meta", attrs: { name: "description", content: "Single-file Modbus Web UI with profiles, name tables, and shortcuts" } },
+        { tag: "meta", attrs: { name: "robots", content: "index,follow" } },
         { tag: "meta", attrs: { name: "keywords", content: KEYWORDS } },
         { tag: "meta", attrs: { name: "author", content: "github.com/anttikotajarvi" } },
         { tag: "meta", attrs: { name: "theme-color", content: "#ffffff" } },
@@ -98,27 +90,19 @@ function createSeoHeadInjector(): Plugin {
         // Open Graph
         { tag: "meta", attrs: { property: "og:site_name", content: "Modbus WebUI" } },
         { tag: "meta", attrs: { property: "og:locale", content: "en_US" } },
-        { tag: "meta", attrs: { property: "og:title", content: "Modbus WebUI – Modbus RTU/RS-485 in the browser" } },
-        { tag: "meta", attrs: { property: "og:description", content: DESC } },
+        { tag: "meta", attrs: { property: "og:title", content: "Modbus WebUI" } },
+        { tag: "meta", attrs: { property: "og:description", content: "Single-file Modbus Web UI with profiles, name tables, and shortcuts" } },
         { tag: "meta", attrs: { property: "og:url", content: SITE_URL } },
         { tag: "meta", attrs: { property: "og:type", content: "website" } },
-        // OG image
-        { tag: "meta", attrs: { property: "og:image", content: OG_IMAGE } },
-        { tag: "meta", attrs: { property: "og:image:secure_url", content: OG_IMAGE } },
-        { tag: "meta", attrs: { property: "og:image:width", content: "1200" } },
-        { tag: "meta", attrs: { property: "og:image:height", content: "630" } },
-        { tag: "meta", attrs: { property: "og:image:type", content: "image/png" } },
-        { tag: "meta", attrs: { property: "og:image:alt", content: "Modbus WebUI — browser-based Modbus RTU client over RS-485" } },
 
         // Twitter
-        { tag: "meta", attrs: { name: "twitter:card", content: "summary_large_image" } },
-        { tag: "meta", attrs: { name: "twitter:title", content: "Modbus WebUI – Modbus RTU/RS-485 in the browser" } },
-        { tag: "meta", attrs: { name: "twitter:description", content: DESC } },
-        { tag: "meta", attrs: { name: "twitter:image", content: OG_IMAGE } },
+        { tag: "meta", attrs: { name: "twitter:card", content: "summary" } },
+        { tag: "meta", attrs: { name: "twitter:title", content: "Modbus WebUI" } },
+        { tag: "meta", attrs: { name: "twitter:description", content: "Single-file Modbus Web UI with profiles, name tables, and shortcuts" } },
         { tag: "meta", attrs: { name: "twitter:site", content: "@anttikotajarvi" } },
         { tag: "meta", attrs: { name: "twitter:creator", content: "@anttikotajarvi" } },
 
-        // JSON-LD (WebSite) with keywords
+        // JSON-LD
         {
           tag: "script",
           attrs: { type: "application/ld+json" },
@@ -127,24 +111,7 @@ function createSeoHeadInjector(): Plugin {
             "@type": "WebSite",
             name: "Modbus WebUI",
             url: SITE_URL,
-            keywords: KEYWORDS
-          }),
-        },
-
-        // JSON-LD (SoftwareApplication) with keywords
-        {
-          tag: "script",
-          attrs: { type: "application/ld+json" },
-          children: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            name: "Modbus WebUI",
-            applicationCategory: "DeveloperApplication",
-            operatingSystem: "Web",
-            offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-            url: SITE_URL,
-            softwareVersion: process.env.npm_package_version || "1.0.0",
-            keywords: KEYWORDS
+            keywords: KEYWORDS,
           }),
         },
 
@@ -166,7 +133,6 @@ function createSeoHeadInjector(): Plugin {
     },
   };
 }
-
 
 
 /**
