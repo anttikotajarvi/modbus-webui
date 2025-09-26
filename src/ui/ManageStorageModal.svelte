@@ -185,7 +185,14 @@
     <Dialog.Header>
       <Dialog.Title class="text-base">Manage Storage</Dialog.Title>
       <Dialog.Description class="text-sm text-muted-foreground">
-        Import a library and choose to replace or merge it with your current data.
+        Import a library and choose to replace or merge it with your current data. <br /> <br />
+        
+        <!-- Localstorage transfer method from old domain to new one -->
+        <b>NOTE: </b> If you had a library saved on the old domain (changed 26.9.2025) you can copy it over from here: 
+        <Button id="manage-storage-import-legacy" variant="link" class="h-8 px-3 text-xs" onclick={() => (window as any).MB_APP.importFromLegacy()}>Import localStorage from old domain</Button>
+        <br /> You can copy it manually or click <i>Send to new site</i> for automatic transfer.
+        <!-- End of legacy note -->
+
       </Dialog.Description>
     </Dialog.Header>
 

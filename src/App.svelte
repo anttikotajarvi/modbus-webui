@@ -8,7 +8,7 @@
   import { onMount, setContext } from 'svelte'
   import WritePanel from '@/panels/WritePanel.svelte'
   import TopMenu from '@/ui/TopMenu.svelte'
-  
+
   // ------------------------
   // Console commands
   // ------------------------
@@ -69,6 +69,7 @@
 
     importLibrary: (json: string) => {
       try {
+        console.log('Importing library JSON:', json)
         const parsed = JSON.parse(json)
         if (typeof parsed !== 'object' || parsed === null) {
           throw new Error('Invalid JSON format')
@@ -121,6 +122,29 @@
         const msg = err instanceof Error ? err.message : String(err)
         sa.error(`Import failed: ${msg}`)
       }
+    },
+    importFromLegacy: async () => {
+      const LEGACY_EXPORTER_URL = new URL('http://127.0.0.1:8080') //"https://anttikotajarvi.github.io/modbus-webui-legacy-export/")
+      const popup = window.open(LEGACY_EXPORTER_URL.href, '_blank', 'width=640,height=800')
+      window.addEventListener(
+        'message',
+        (ev) => {
+          if (ev.origin !== LEGACY_EXPORTER_URL.origin) return
+          if (!ev.data || ev.data.type !== 'MODBUS_WEBUI_LEGACY_EXPORT') return
+
+          const lib = ev.data.data
+          if (typeof lib !== 'object' || lib === null) {
+            sa.error('Legacy library import failed: invalid data received.')
+            return
+          }
+          sa.info('Legacy library received. Proceeding to import…')
+          console.log('Legacy lib:', lib)
+
+          consoleCommands.importLibrary(JSON.stringify(lib)) // Already in json format
+          popup?.close()
+        },
+        { once: true },
+      )
     },
   }
 
@@ -270,7 +294,7 @@
   import NameTableSetModal from '@/ui/NameTableSetModal.svelte'
   import SystemAlert from '@/ui/alert/SystemAlert.svelte'
 
-  let modals = $state({ addProfileOpen: false, nameTableOpen: false, manageStorageOpen: false });
+  let modals = $state({ addProfileOpen: false, nameTableOpen: false, manageStorageOpen: false })
 
   // -------------------------
   // Profile management
@@ -458,7 +482,12 @@
             bind:shortcuts={lib.profiles[activeProfileId].writeShortcuts}
             nts={currentNTS}
           />
-          <WritePanel id="wp-hr" type="write_registers" nts={currentNTS} addShortcut={AddShortcut} />
+          <WritePanel
+            id="wp-hr"
+            type="write_registers"
+            nts={currentNTS}
+            addShortcut={AddShortcut}
+          />
           <WritePanel id="wp-c" type="write_coils" nts={currentNTS} addShortcut={AddShortcut} />
         </div>
       </aside>
@@ -490,10 +519,11 @@
     current={lib}
     onExport={() => consoleCommands.exportLibrary()}
     onImport={(libSer: SerializableLibrary) => {
-      lib = fromSerializable($state.snapshot(libSer) as SerializableLibrary);
-      saveLibrary(lib);
+      lib = fromSerializable($state.snapshot(libSer) as SerializableLibrary)
+      saveLibrary(lib)
       alert.success('Storage imported successfully.')
-    }} />
+    }}
+  />
 </div>
 
 <style>

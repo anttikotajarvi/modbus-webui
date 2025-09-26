@@ -6,7 +6,7 @@ import path from "path";
 import pkg from "./package.json" with { type: "json" };
 
 const isDeployment = Boolean(process.env.VITE_GH_PAGES);
-const siteURL = "https://anttikotajarvi.github.io/modbus-webui/"
+const siteURL = "https://modbuswebui.dev/"
 const githubURL = "https://github.com/anttikotajarvi/modbus-webui";
 
 export default defineConfig({
@@ -64,14 +64,14 @@ function createSeoHeadInjector(): Plugin {
   return {
     name: "seo-head-injector",
     transformIndexHtml(html): IndexHtmlTransformResult {
-      const SITE_URL =
-        process.env.VITE_SITE_URL ||
-        siteURL;
+      const SITE_URL = process.env.VITE_SITE_URL || siteURL;
       const GA_ID = process.env.VITE_GA_ID || "G-0HFN4G088N";
 
-      // Ensure SITE_URL ends with a slash for simple concatenation
       const withSlash = SITE_URL.replace(/\/?$/, "/");
       const asset = (p: string) => `${withSlash}${p}`.replace(/([^:]\/)\/+/g, "$1");
+
+      const KEYWORDS =
+        "modbus,webui,automation,modbus rtu,rs-485,rs485,web serial,usb-to-rs485,modbus client,modbus master,serial";
 
       const tags = [
         // Canonical + icons + PWA
@@ -83,7 +83,7 @@ function createSeoHeadInjector(): Plugin {
         // Core meta
         { tag: "meta", attrs: { name: "description", content: "Single-file Modbus Web UI with profiles, name tables, and shortcuts" } },
         { tag: "meta", attrs: { name: "robots", content: "index,follow" } },
-        { tag: "meta", attrs: { name: "keywords", content: "modbus,webui,automation" } },
+        { tag: "meta", attrs: { name: "keywords", content: KEYWORDS } },
         { tag: "meta", attrs: { name: "author", content: "github.com/anttikotajarvi" } },
         { tag: "meta", attrs: { name: "theme-color", content: "#ffffff" } },
 
@@ -111,6 +111,7 @@ function createSeoHeadInjector(): Plugin {
             "@type": "WebSite",
             name: "Modbus WebUI",
             url: SITE_URL,
+            keywords: KEYWORDS,
           }),
         },
 
@@ -132,6 +133,7 @@ function createSeoHeadInjector(): Plugin {
     },
   };
 }
+
 
 /**
  * Replace %TOKENS% inside index.html at build time.
