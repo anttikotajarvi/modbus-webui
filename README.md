@@ -15,7 +15,7 @@ Built with [Svelte](https://svelte.dev) and [shadcn](https://www.shadcn-svelte.c
 ## Quick start
 
 ### Directly from Github Pages
-### --> [modbus-webUI](https://anttikotajarvi.github.io/modbus-webui/) <--
+### --> [modbus-webUI](https://modbuswebui.dev/) <--
 ### or with npx
 
 ```bash
