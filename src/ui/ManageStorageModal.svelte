@@ -15,7 +15,6 @@
     toSerializable,
   } from '@/sys/system'
   import type { SvelteComponent } from 'svelte'
-  import { any } from 'zod/v4-mini'
 
   let {
     open = $bindable<boolean>(false),
@@ -193,7 +192,7 @@
         <Button id="manage-storage-import-legacy" variant="link" class="h-8 px-3 text-xs" onclick={() => (window as any).MB_APP.importFromLegacy()}>Import localStorage from old domain</Button>
         <br /> You can copy it manually or click <i>Send to new site</i> for automatic transfer.
         <!-- End of legacy note -->
-         
+
       </Dialog.Description>
     </Dialog.Header>
 

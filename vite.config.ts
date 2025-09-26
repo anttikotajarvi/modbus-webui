@@ -60,7 +60,6 @@ export default defineConfig({
 });
 
 // SEO head injector (build-time)
-// SEO head injector (build-time)
 function createSeoHeadInjector(): Plugin {
   return {
     name: "seo-head-injector",
