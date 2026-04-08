@@ -122,30 +122,7 @@
         const msg = err instanceof Error ? err.message : String(err)
         sa.error(`Import failed: ${msg}`)
       }
-    },
-    importFromLegacy: async () => {
-      const LEGACY_EXPORTER_URL = new URL("https://anttikotajarvi.github.io/modbus-webui-legacy-export/");
-      const popup = window.open(LEGACY_EXPORTER_URL.href, '_blank', 'width=640,height=800')
-      window.addEventListener(
-        'message',
-        (ev) => {
-          if (ev.origin !== LEGACY_EXPORTER_URL.origin) return
-          if (!ev.data || ev.data.type !== 'MODBUS_WEBUI_LEGACY_EXPORT') return
-
-          const lib = ev.data.data
-          if (typeof lib !== 'object' || lib === null) {
-            sa.error('Legacy library import failed: invalid data received.')
-            return
-          }
-          sa.info('Legacy library received. Proceeding to import…')
-          console.log('Legacy lib:', lib)
-
-          consoleCommands.importLibrary(JSON.stringify(lib)) // Already in json format
-          popup?.close()
-        },
-        { once: true },
-      )
-    },
+    }
   }
 
   // expose to window early so it works even if UI fails later
