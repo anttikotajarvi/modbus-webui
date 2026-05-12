@@ -14,7 +14,7 @@
   // Console commands
   // ------------------------
 
-
+  /*
   const consoleCommands = {
     resetStorage: () => {
       lib.set(createEmptyLibrary())
@@ -101,10 +101,10 @@
       }
     },
   }
-
   // expose to window early so it works even if UI fails later
   ;(globalThis as any).MB_APP ??= {}
   Object.assign((globalThis as any).MB_APP, consoleCommands)
+  */
 
   // ------------------------
   // Modbus client setup
@@ -181,7 +181,7 @@
   const activeProfileTagRef = lib.focus((x) => x.activeProfileTag)!
 
   const profileRef = lib.follow(activeProfileLoc)
-  const activeNametableTagRef = profileRef.focus(key("activeNametable"))
+  const activeNametableTagRef = profileRef.focus(key('activeNametable'))
 
   const nametableRef = lib.follow(activeNametableLoc)
   const shortcutsRef = profileRef.focus(key('writeShortcuts'))
@@ -209,11 +209,41 @@
     return ok(true)
   }
   /* UI procedure */
-  const persistenceActions: PersistenceActions = {
-    saveLibrary: () => {
-      if (persistLibrary().val) alert.success('Library saved to localStorage.')
-    },
-  }
+  const persistenceActions: PersistenceActions = (() => {
+    const setLibrary = (data: LibraryData) => {
+      lib.set(data)
+      persistLibrary()
+      alert.success('Library imported successfully.')
+    }
+    return {
+      saveLibrary: () => {
+        if (persistLibrary().val) alert.success('Library saved to localStorage.')
+      },
+      exportLibrary: () => {
+        const data = JSON.stringify(serializeLibrary(lib.value()))
+        exportFile(exportFilename, new Blob([data], { type: 'application/json' }))
+        alert.success('Library exported successfully.')
+      },
+      setLibrary,
+
+      importLibrary: (str: string) => {
+        try {
+          console.log('Importing library JSON:', str)
+          const { val: parsed, err } = parseEnvelope(str)
+          if (err) throw err
+
+          const { val: norm, err: err2 } = normalizeLibrary(parsed)
+          if (err2) throw err2
+
+          setLibrary(norm.data)
+        } catch (err) {
+          console.error('Import failed:', err)
+          const msg = err instanceof Error ? err.message : String(err)
+          alert.error(`Import failed: ${msg}`)
+        }
+      },
+    }
+  })()
 
   const clientProcedures = createModbusClientProcedures({ clientRef: client })
 
@@ -254,6 +284,8 @@
   import { makeRef } from './util/ref'
   import { createModbusClientProcedures } from './sys/modbus/gateway'
   import NametableModal from '@/ui/modals/NametableModal.svelte'
+  import { exportFile } from './util/dom'
+  import { exportFilename } from './sys/storage'
 
   const alert = useAlert()
 </script>
@@ -323,14 +355,14 @@
             type="write_registers"
             writeToClient={clientProcedures.writeToClient}
             namesRef={nametableRef.focus(key('hregs'))}
-            shortcutsRef={shortcutsRef}
+            {shortcutsRef}
           />
           <WritePanel
             id="wp-c"
             type="write_coils"
             writeToClient={clientProcedures.writeToClient}
             namesRef={nametableRef.focus(key('coils'))}
-            shortcutsRef={shortcutsRef}
+            {shortcutsRef}
           />
         </div>
       </aside>
@@ -341,18 +373,14 @@
   <NametableModal
     bind:open={modals.nametableOpen}
     activeTagRef={activeNametableTagRef}
-    nametablesRef={lib.focus(key("nametables"))}
+    nametablesRef={lib.focus(key('nametables'))}
   />
   <!-- Modal to manage storage (import/export) -->
   <ManageStorageModal
     bind:open={modals.manageStorageOpen}
     libRef={lib}
-    onExport={() => consoleCommands.exportLibrary()}
-    onImport={(libSer: SerializableLibrary) => {
-      lib = fromSerializable($state.snapshot(libSer) as SerializableLibrary)
-      saveLibrary(lib)
-      alert.success('Storage imported successfully.')
-    }}
+    onExport={persistenceActions.exportLibrary}
+    onImport={persistenceActions.setLibrary}
   />
 </div>
 

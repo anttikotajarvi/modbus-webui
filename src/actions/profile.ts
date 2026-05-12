@@ -6,7 +6,7 @@ import {
   type ProfileTag,
 } from '@/sys/library/types'
 import type { WriteQuery } from '@/sys/modbus'
-import { deleteProfile, setActiveProfile, setProfile, setShortcut } from '@/sys/state'
+import { deleteProfile, setActiveProfile, setProfile } from '@/sys/state'
 import { useAlert } from '@/ui/alert/context'
 import type { SvimmerWriter } from 'svimmer-store'
 import { begin, setKey } from 'svimmer-store/helpers/transactors'

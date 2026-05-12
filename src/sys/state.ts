@@ -1,5 +1,5 @@
 import {
-  Nametable,
+  type Nametable,
   SCRATCH_ID,
   type LibraryData,
   type NametableTag,

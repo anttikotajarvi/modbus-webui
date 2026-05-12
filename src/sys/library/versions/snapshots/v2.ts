@@ -78,7 +78,7 @@ const nametable = z.object({
 const nametables = z.record(z.string(), nametable)
 
 const profile = z.object({
-  selectedNametable: z.union([z.string(), z.null()]),
+  activeNametable: z.union([z.string(), z.null()]),
   layout: z.optional(z.array(z.any())),
   connectionSettings: connectionSettingsSchema,
   writeShortcuts: z.record(z.string(), writeQuerySchema),

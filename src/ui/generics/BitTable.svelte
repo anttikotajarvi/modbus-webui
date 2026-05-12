@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import { HEX } from '@/sys/modbus';
+  import { HEX } from '@/sys/generic/formatting'
 
   type BitTableProps = {
     startAddress: number;

@@ -50,4 +50,3 @@ export type Nametable = {
   coils: Map<number, string>;
   dinputs: Map<number, string>;
 };
-

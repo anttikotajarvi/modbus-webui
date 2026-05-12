@@ -18,7 +18,9 @@
     lib: SvimmerWriter<LibraryData>
   } = $props();
 
+  // svelte-ignore state_referenced_locally
   const profilesRef = lib.focus(x => x.profiles)
+  // svelte-ignore state_referenced_locally
   const profileRef = lib.follow(activeProfileLoc);
 
   let profileTags = $derived($profilesRef.read(profileKeys))
