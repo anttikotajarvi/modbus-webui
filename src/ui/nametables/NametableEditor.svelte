@@ -18,7 +18,7 @@
     ondelete,
     dirty = $bindable<boolean>(false),
   }: {
-    name: string,
+    name: string
     initialData: Nametable
     onsave: (nt: Nametable) => void
     ondelete: () => void
@@ -116,11 +116,13 @@
 
 <Card.Root class="w-full">
   <Card.Header>
-    <Card.Title>Nametable <code
- class="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold"
->
- {name}
-</code></Card.Title>
+    <Card.Title
+      >Nametable <code
+        class="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold"
+      >
+        {name}
+      </code></Card.Title
+    >
     <Card.Description class="text-sm text-muted-foreground">
       Edit via the table editor or paste JSON. Addresses are 0x0000–0xFFFF.
     </Card.Description>
@@ -183,7 +185,7 @@
       {dirty ? 'Unsaved changes' : ''}
     </span>
     <div class="ml-auto">
-      <Button variant="destructive" onclick={ondelete}>Delete set…</Button>
+      <Button variant="destructive" onclick={ondelete}>Delete Set…</Button>
     </div>
   </Card.Footer>
 </Card.Root>

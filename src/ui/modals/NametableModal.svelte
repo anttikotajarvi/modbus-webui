@@ -12,7 +12,8 @@
   import NametableEditor from '@/ui/nametables/NametableEditor.svelte'
   import { key } from 'svimmer-store/helpers/selectors'
   import { keysOf } from 'svimmer-store/helpers/accessors'
-  import { readable, writable } from 'svelte/store'
+  import { writable } from 'svelte/store'
+  import { sv } from '@/util/sv.svelte'
 
   let {
     open = $bindable<boolean>(false),
@@ -48,7 +49,7 @@
 
   function onSelect(nextId: string) {
     if (currentDirty) {
-      alert.info(`Discarded unsaved changes to ${selectedTag ?? 'current set'}`)
+      alert.info(`Discarded unsaved changes to ${$selectedTag ?? 'current set'}`)
     }
     selectedTag.set(nextId as NametableTag)
   }
@@ -70,15 +71,15 @@
   }
   function onSave(data: Nametable) {
     const id = $selectedTag
-    nametablesRef.transact(setKey(id, data))
-    alert.success('Nametable saved!', 'Saved ' + id)
+    nametablesRef.transact(setKey(id, sv(data)))
+    alert.success('Nametable Saved!', 'Saved ' + id)
   }
 </script>
 
 <Dialog.Root bind:open>
   <Dialog.Content class="sm:max-w-[1000px]">
     <Dialog.Header>
-      <Dialog.Title>Edit nametables</Dialog.Title>
+      <Dialog.Title>Edit Nametables</Dialog.Title>
       <Dialog.Description class="text-sm text-muted-foreground">
         Choose a nametable to edit. Changes are applied when you press <em>Save</em>.
       </Dialog.Description>
@@ -94,7 +95,7 @@
           >
             <Select.Trigger class="w-full h-9">
               {#if $selectedTag}{$selectedTag}{:else}<span class="text-muted-foreground"
-                  >Select a nametable...</span
+                  >Select a Nametable...</span
                 >{/if}
             </Select.Trigger>
             <Select.Content>
@@ -143,7 +144,7 @@
 <Dialog.Root bind:open={newOpen}>
   <Dialog.Content class="sm:max-w-[520px]">
     <Dialog.Header>
-      <Dialog.Title>New name table set</Dialog.Title>
+      <Dialog.Title>New Name Table Set</Dialog.Title>
       <Dialog.Description class="text-sm text-muted-foreground">
         Choose an identifier. Use A–Z, digits, and “_”. Digits cannot be first.
       </Dialog.Description>

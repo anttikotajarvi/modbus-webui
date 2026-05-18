@@ -1,7 +1,5 @@
-import { resErr, ok, type Result } from "@/types/generic"
-import type { JSONValue } from "node_modules/superjson/dist/types"
-import type { ReadQuery, WriteQuery } from "../modbus"
-import type { Nametable } from "../library/types"
+import { resErr, ok, type Result } from '@/types/generic'
+import type { JSONValue } from 'node_modules/superjson/dist/types'
 
 function formatMs(ms: number, opts: { alwaysHours?: boolean } = {}): string {
   const sign = ms < 0 ? '-' : ''
@@ -34,13 +32,11 @@ const hasProp = <T extends object, K extends PropertyKey>(
 }
 export { formatMs, debounce, hasProp }
 
-
-export function safeJSONParse(data:unknown): Result<JSONValue> {
+export function safeJSONParse(data: unknown): Result<JSONValue> {
   try {
-    const parsed = JSON.parse(data as string);
+    const parsed = JSON.parse(data as string)
     return ok(parsed)
-  } catch(e) {
-    return resErr(new Error("Failed to parse JSON.", {cause: e}))
+  } catch (e) {
+    return resErr(new Error('Failed to parse JSON.', { cause: e }))
   }
 }
-

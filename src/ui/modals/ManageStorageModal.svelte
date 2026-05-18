@@ -4,13 +4,13 @@
   import { Label } from '$lib/components/ui/label'
   import { Textarea } from '$lib/components/ui/textarea'
   import { Separator } from '$lib/components/ui/separator'
-  import * as Alert from "$lib/components/ui/alert"
+  import * as Alert from '$lib/components/ui/alert'
   import * as RadioGroup from '$lib/components/ui/radio-group'
 
   import type { LibraryData, NametableTag, ProfileTag } from '@/sys/library/types'
   import { normalizeLibrary, serializeLibrary } from '@/sys/library'
-  import { ensureEnvelope, parseEnvelope } from '@/sys/generic/persistence'
-  import { STORAGE_VERSION, type CurrentVersion } from '@/sys/library/versions/current'
+  import { ensureEnvelope } from '@/sys/generic/persistence'
+  import type { CurrentVersion } from '@/sys/library/versions/current'
   import { openFiles } from '@/sys/generic/open-file'
   import type { SvimmerReader } from 'svimmer-store'
   import { useAlert } from '../alert/context'
@@ -184,7 +184,7 @@
         choices.sets[k] === 'new' ? loaded.data.nametables[k] : current.nametables[k]
     }
 
-    // Keep current activeProfileTag
+    // Keep Current activeProfileTag
     merged.activeProfileTag = current.activeProfileTag ?? null
 
     onImport(sv(merged))
@@ -243,7 +243,7 @@
           id="manage-storage-load-template"
           onclick={handleLoadTemplate}
           class="discrete text-xs m-1 ml-auto text-blue-500 float-right"
-          >Load library template</button
+          >Load Library Template</button
         >
       </div>
       <Textarea
@@ -256,7 +256,7 @@
       &nbsp;
       {#if loadError}
         <Alert.Root variant="destructive">
-          <Alert.Title>Invalid library</Alert.Title>
+          <Alert.Title>Invalid Library</Alert.Title>
           <Alert.Description>{loadError}</Alert.Description>
         </Alert.Root>
       {:else if loaded}
@@ -272,12 +272,12 @@
       <RadioGroup.Root class="flex flex-wrap gap-6 text-sm" bind:value={mode} disabled={!loaded}>
         <div class="flex items-center gap-2">
           <RadioGroup.Item id="manage-storage-mode-replace" value="replace" disabled={!loaded} />
-          <Label for="manage-storage-mode-replace">Replace current library</Label>
+          <Label for="manage-storage-mode-replace">Replace Current Library</Label>
         </div>
         <div class="flex items-center gap-2">
           <RadioGroup.Item id="manage-storage-mode-merge" value="merge" />
           <Label for="manage-storage-mode-merge" class={!loaded ? 'opacity-50' : ''}
-            >Merge libraries</Label
+            >Merge Libraries</Label
           >
         </div>
       </RadioGroup.Root>
@@ -301,13 +301,13 @@
                   id="manage-storage-keep-current"
                   variant="outline"
                   class="h-7 px-2 text-xs"
-                  onclick={() => handleChooseAllProfiles('current')}>Keep current</Button
+                  onclick={() => handleChooseAllProfiles('current')}>Keep Current</Button
                 >
                 <Button
                   id="manage-storage-use-new"
                   variant="outline"
                   class="h-7 px-2 text-xs"
-                  onclick={() => handleChooseAllProfiles('new')}>Use new</Button
+                  onclick={() => handleChooseAllProfiles('new')}>Use New</Button
                 >
               </div>
             {/if}
@@ -319,7 +319,7 @@
             </div>
             <div class="h-40 overflow-y-auto pr-2">
               {#if conflicts.profiles.length === 0}
-                <div class="opacity-60">No profile name conflicts.</div>
+                <div class="opacity-60">No Profile Name Conflicts.</div>
               {:else}
                 <ul class="divide-y">
                   {#each conflicts.profiles as k (k)}
@@ -346,23 +346,23 @@
           </div>
         </div>
 
-        <!-- Name table sets -->
+        <!-- Name Table Sets -->
         <div class="rounded-md border">
           <div class="flex items-center justify-between p-2">
-            <div class="text-sm font-medium">Name table sets</div>
+            <div class="text-sm font-medium">Name Table Sets</div>
             {#if conflicts.sets.length}
               <div class="flex items-center gap-2">
                 <Button
                   id="manage-storage-keep-all-current"
                   variant="outline"
                   class="h-7 px-2 text-xs"
-                  onclick={() => handleChooseAllNametables('current')}>Keep current</Button
+                  onclick={() => handleChooseAllNametables('current')}>Keep Current</Button
                 >
                 <Button
                   id="manage-storage-use-all-new"
                   variant="outline"
                   class="h-7 px-2 text-xs"
-                  onclick={() => handleChooseAllNametables('new')}>Use new</Button
+                  onclick={() => handleChooseAllNametables('new')}>Use New</Button
                 >
               </div>
             {/if}
@@ -374,7 +374,7 @@
             </div>
             <div class="h-40 overflow-y-auto pr-2">
               {#if conflicts.sets.length === 0}
-                <div class="opacity-60">No nametable conflicts.</div>
+                <div class="opacity-60">No Nametable Conflicts.</div>
               {:else}
                 <ul class="divide-y">
                   {#each conflicts.sets as k (k)}

@@ -8,6 +8,7 @@ import {
 import type { WriteQuery } from '@/sys/modbus'
 import { deleteProfile, setActiveProfile, setProfile } from '@/sys/state'
 import { useAlert } from '@/ui/alert/context'
+import { sv } from '@/util/sv.svelte'
 import type { SvimmerWriter } from 'svimmer-store'
 import { begin, setKey } from 'svimmer-store/helpers/transactors'
 
@@ -26,11 +27,11 @@ export function performDeleteProfile(lib: SvimmerWriter<LibraryData>, id: Profil
 }
 
 export function performAddShortcut(
-  shortcutsRef: SvimmerWriter<ProfileData["writeShortcuts"]>,
+  shortcutsRef: SvimmerWriter<ProfileData['writeShortcuts']>,
   name: string,
   query: WriteQuery,
 ) {
-  shortcutsRef.transact(setKey(name, query))
+  shortcutsRef.transact(setKey(name, sv(query)))
   alert.success(`Added shortcut "${name}".`)
 }
 
@@ -39,9 +40,8 @@ export function performCreateProfile(
   tag: ProfileTag,
   initialData?: ProfileData,
 ) {
-  const data = initialData ? structuredClone(initialData) : createEmptyProfile()
+  const data = initialData ? structuredClone(sv(initialData)) : createEmptyProfile()
   lib.transact(begin(setProfile(tag, data), setActiveProfile(tag)))
 
   alert.success(`Created profile "${tag}"`)
 }
-

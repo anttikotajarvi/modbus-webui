@@ -36,6 +36,7 @@
   const emptyNames = new Map<number, string>()
   let names = $derived($namesRef.value() ?? emptyNames)
 
+  // svelte-ignore state_referenced_locally
   let settings: RPanelSettings = $state<RPanelSettings>({
     queryTemplate: {
       type,
@@ -151,7 +152,7 @@
         <div class="flex max-w-sm flex-col gap-1.5">
           <Label for="interval" class="text-muted-foreground">
             <Checkbox id={id + '-read-panel-autorefresh'} bind:checked={settings.autoRefresh} />
-            <Label for={id + '-read-panel-autorefresh'}>Auto refresh</Label>
+            <Label for={id + '-read-panel-autorefresh'}>Auto Refresh</Label>
           </Label>
           <Input
             id={id + '-read-panel-interval'}
@@ -208,7 +209,7 @@
               {/if}
             </Alert.Description>
           {:else}
-            <Alert.Title>No data yet</Alert.Title>
+            <Alert.Title>No Data Yet</Alert.Title>
             <Alert.Description class="text-sm text-muted-foreground">
               Click "Refresh" to load data.
             </Alert.Description>

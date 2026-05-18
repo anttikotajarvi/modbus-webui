@@ -125,7 +125,9 @@
 <Tooltip.Provider>
   <Tooltip.Root>
     <Badge variant="outline" class="pt-0 pb-0 pr-0 border-muted">
-      <Tooltip.Trigger tabindex={-1} class="text-muted-foreground"><Brackets size={16}/></Tooltip.Trigger>
+      <Tooltip.Trigger tabindex={-1} class="text-muted-foreground"
+        ><Brackets size={16} /></Tooltip.Trigger
+      >
       <HexInput
         bind:ref={inputEl}
         id={inputId}
@@ -139,8 +141,8 @@
         onpaste={onPaste}
       />
     </Badge>
-  <Tooltip.Content>
-   <ArrayInputTooltip />
-  </Tooltip.Content>
+    <Tooltip.Content>
+      <ArrayInputTooltip />
+    </Tooltip.Content>
   </Tooltip.Root>
 </Tooltip.Provider>

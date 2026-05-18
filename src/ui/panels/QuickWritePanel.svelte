@@ -4,7 +4,7 @@
   import { Button } from '$lib/components/ui/button'
   import { Play, Trash2 } from '@lucide/svelte'
 
-  import { regPrefixes, type WriteQuery, type WriteResponse } from '@/sys/modbus'
+  import { regPrefixes, type WriteQuery } from '@/sys/modbus'
   import { useAlert } from '@/ui/alert/context'
   import type { SvimmerReader, SvimmerWriter } from 'svimmer-store'
   import type { Nametable, ProfileData } from '@/sys/library/types'
@@ -14,21 +14,19 @@
   import type { ModbusClientProcedures } from '@/sys/modbus/gateway'
 
   type Props = {
-    profileRef: SvimmerWriter<ProfileData>,
-    nametable: SvimmerReader<Nametable | undefined>,
-    writeToClient: ModbusClientProcedures["writeToClient"]
+    profileRef: SvimmerWriter<ProfileData>
+    nametable: SvimmerReader<Nametable | undefined>
+    writeToClient: ModbusClientProcedures['writeToClient']
   }
   let { profileRef, nametable, writeToClient }: Props = $props()
 
-  // svelte-ignore state_referenced_locally
-  const shortcuts = profileRef.focus(x => x.writeShortcuts)
+  const shortcuts = profileRef.focus((x) => x.writeShortcuts)
 
   // Derived list for rendering
   let rows = $derived(Object.entries($shortcuts.value()))
 
   // Execute write using app-provided context
   const alert = useAlert()
-
 
   function fnLabel(q: WriteQuery) {
     if (q.type === 'write_registers') {
@@ -48,7 +46,7 @@
   }
 
   async function handleRun(name: string) {
-    const q = shortcuts.read(x => x[name]) as WriteQuery
+    const q = shortcuts.read((x) => x[name]) as WriteQuery
     if (!q) return
     try {
       const res = await writeToClient(q)
@@ -90,9 +88,8 @@
 
         <Table.Body>
           {#each rows as [name, q] (name)}
-
-          {@const { label, address, parts } = callDisplayParts(q)}
-          {@const resolvedName = nametable.read(resolveAddressName(q)) }
+            {@const { label, address, parts } = callDisplayParts(q)}
+            {@const resolvedName = nametable.read(resolveAddressName(q))}
             <Table.Row
               class="hover:bg-secondary/40 cursor-pointer"
               onclick={() => handleRun(name)}
@@ -103,15 +100,22 @@
                 <div class="font-medium">{name}</div>
               </Table.Cell>
               <Table.Cell class="align-top">
-                <div class="font-mono text-xs">{label} {address}{resolvedName ? `/${resolvedName}` : ""}</div>
+                <div class="font-mono text-xs">
+                  {label}
+                  {address}{resolvedName ? `/${resolvedName}` : ''}
+                </div>
                 <div class="text-xs text-muted-foreground">{parts}</div>
               </Table.Cell>
               <Table.Cell class="align-top">
                 <div class="flex justify-end gap-2">
-                  <Button size="sm" onclick={(e) => {
-                    e.stopPropagation()
-                    handleRun(name)
-                  }} aria-label={`Run ${name}`}>
+                  <Button
+                    size="sm"
+                    onclick={(e) => {
+                      e.stopPropagation()
+                      handleRun(name)
+                    }}
+                    aria-label={`Run ${name}`}
+                  >
                     <Play class="size-4 mr-1" /> Run
                   </Button>
                   <Button
@@ -131,6 +135,7 @@
     {/if}
   </Card.Content>
   <Card.Footer class="text-xs text-muted-foreground">
-    Click a row (or&nbsp; <em>Run</em>) to execute immediately. Shorthands are stored in your current profile.
+    Click a row (or&nbsp; <em>Run</em>) to execute immediately. Shorthands are stored in your
+    current profile.
   </Card.Footer>
 </Card.Root>

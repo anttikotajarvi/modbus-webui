@@ -4,7 +4,7 @@
   import { Button } from '$lib/components/ui/button'
   import { Label } from '$lib/components/ui/label'
   import { Separator } from '$lib/components/ui/separator'
-  import { ChevronUp, OctagonX } from '@lucide/svelte'
+  import { ChevronUp } from '@lucide/svelte'
   import HexArrayInput from '@/ui/generics/custom-input/HexArrayInput.svelte'
   import BinaryArrayInput from '@/ui/generics/custom-input/BinaryArrayInput.svelte'
   import { useAlert } from '@/ui/alert/context'
@@ -25,7 +25,6 @@
   import type { ModbusClientProcedures } from '@/sys/modbus/gateway'
   import { sv } from '@/util/sv.svelte'
   import { ModbusCallPreview, PositionValueChip } from '@/ui/modbus'
-  import X from '@lucide/svelte/icons/x'
 
   let {
     id,
@@ -103,8 +102,8 @@
   }
 
   function handleClear() {
-    wordValues = [];
-    bitValues = [];
+    wordValues = []
+    bitValues = []
   }
 
   function isQueryValid() {
@@ -121,7 +120,7 @@
   let shortcutName = $state<string>('')
   function handleSaveShortcut() {
     if (shortcutName.trim() === '') {
-      alert.error('Shortcut name cannot be empty.')
+      alert.error('Shortcut Name cannot be empty.')
       return
     }
     if (!isQueryValid()) {
@@ -211,7 +210,7 @@
           onfocusin={handleValuesFocusIn}
           onfocusout={handleValuesFocusOut}
         >
-          <Label for={id + '-write-panel-values'} class="text-muted-foreground">Add values</Label>
+          <Label for={id + '-write-panel-values'} class="text-muted-foreground">Add Values</Label>
           {#if type === 'write_coils'}
             <BinaryArrayInput
               id={id + '-write-panel-values'}
@@ -260,7 +259,9 @@
           <div class="mb-2 flex flex-wrap items-center gap-2">
             <span class="font-medium text-foreground">Values</span>
             {#if rightValues.length > 0}
-              <Button variant="link" class="m-0 ml-auto h-[1em]" size={"sm"} onclick={handleClear}> Clear</Button>
+              <Button variant="link" class="m-0 ml-auto h-[1em]" size="sm" onclick={handleClear}>
+                Clear</Button
+              >
             {/if}
           </div>
           <div class="flex flex-wrap gap-2">
@@ -268,7 +269,7 @@
               <span
                 class="inline-flex items-center rounded-md border border-dashed bg-background px-2 py-1 text-xs text-muted-foreground"
               >
-                Focus Add values and enter a value to start the queue.
+                Focus Add Values and enter a value to start the queue.
               </span>
             {:else}
               {#each rightValues as v, i (i)}
@@ -290,7 +291,7 @@
       <Separator orientation="horizontal" />
       <Card.Footer class="flex flex-col gap-4 items-start">
         <div class="pt-4">
-          <p class="text-sm font-medium text-foreground">Address/value preview</p>
+          <p class="text-sm font-medium text-foreground">Address/Value Preview</p>
           <p class="text-xs text-muted-foreground">
             Each collected value maps to the next Modbus address from the configured start address.
           </p>
@@ -323,7 +324,7 @@
                 <Table.Row>
                   <Table.Cell class="font-medium">{regPrefix(address)}</Table.Cell>
                   <Table.Cell class="font-mono">{HEX(address, 4)}</Table.Cell>
-                  <Table.Cell class="truncate text-muted-foreground">No values queued</Table.Cell>
+                  <Table.Cell class="truncate text-muted-foreground">No Values Queued</Table.Cell>
                   <Table.Cell class="text-blue-500 text-right font-mono"></Table.Cell>
                   <Table.Cell class="text-blue-500 font-mono"></Table.Cell>
                   <Table.Cell class="text-blue-500 font-mono"></Table.Cell>
@@ -338,7 +339,7 @@
                 <Table.Row>
                   <Table.Cell class="font-medium">{regPrefix(address)}</Table.Cell>
                   <Table.Cell class="font-mono">{HEX(address, 4)}</Table.Cell>
-                  <Table.Cell class="truncate text-muted-foreground">No values queued</Table.Cell>
+                  <Table.Cell class="truncate text-muted-foreground">No Values Queued</Table.Cell>
                   <Table.Cell class="text-blue-500 text-right font-mono"></Table.Cell>
                   <Table.Cell class="text-blue-500 font-mono"></Table.Cell>
                 </Table.Row>
@@ -361,7 +362,7 @@
         <div class="flex items-end gap-3 pt-4">
           <div class="flex flex-col gap-1.5">
             <Label for={id + '-write-panel-shortcut-name'} class="text-muted-foreground"
-              >Shortcut name</Label
+              >Shortcut Name</Label
             >
             <TagInput
               id={id + '-write-panel-shortcut-name'}

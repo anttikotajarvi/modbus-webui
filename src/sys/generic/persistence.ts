@@ -8,7 +8,7 @@ import type { VersionKey } from '../library/versions'
 
 export interface Persistence {
   fetchLibrary: (key: string) => Result<Versioned<number, JSONValue> | null>
-  fetchLegacyLibrary: () => Result<Versioned<1, JSONValue> | null>,
+  fetchLegacyLibrary: () => Result<Versioned<1, JSONValue> | null>
   writeLibrary: (key: string, data: Versioned<VersionKey, JSONValue>) => void
 }
 export const LEGACY_KEY = 'modbus:library:v1'
@@ -26,12 +26,12 @@ export function ensureEnvelope(value: unknown): Result<Versioned<number, JSONVal
   const { val, err } = safeJSONParse(value)
   if (err) return resErr(err)
 
-  const { success, data, error } = versionedSchema.safeParse(val)
+  const { success, data } = versionedSchema.safeParse(val)
   if (!success) {
     // No version, assume V1
     return ok({
       version: 1,
-      data: val
+      data: val,
     } as Versioned<number, JSONValue>)
   }
 
@@ -59,6 +59,6 @@ export function createPersistence(storage: Storage): Persistence {
     },
     writeLibrary(key, data) {
       return storage.setItem(key, JSON.stringify(data))
-    }
+    },
   }
 }

@@ -1,22 +1,26 @@
-import { createEmptyLibrary } from "@/sys/library/defaults";
-import type { PersistenceActions } from "./persistence";
-import type { SvimmerWriter } from "svimmer-store";
-import type { LibraryData } from "@/sys/library/types";
-import { useAlert } from "@/ui/alert/context";
-import { openFiles } from "@/sys/generic/open-file";
-const alert = useAlert();
+import { createEmptyLibrary } from '@/sys/library/defaults'
+import type { PersistenceActions } from './persistence'
+import type { SvimmerWriter } from 'svimmer-store'
+import type { LibraryData } from '@/sys/library/types'
+import { useAlert } from '@/ui/alert/context'
+import { openFiles } from '@/sys/generic/open-file'
+const alert = useAlert()
 
-export function primeConsoleCommands(persistenceActions: PersistenceActions, lib: SvimmerWriter<LibraryData>, persistLibrary: () => void) {
+export function primeConsoleCommands(
+  persistenceActions: PersistenceActions,
+  lib: SvimmerWriter<LibraryData>,
+  persistLibrary: () => void,
+) {
   const consoleCommands = {
     resetStorage: () => {
       lib.set(createEmptyLibrary())
       void persistLibrary()
-      alert.success('Storage reset to default state.')
+      alert.success('Storage Reset to Default State.')
     },
 
     printLibraryToConsole: () => {
       console.log('Current library state:', lib.value())
-      alert.info('Library state printed to console.')
+      alert.info('Library State Printed to Console.')
     },
 
     exportLibrary: () => {

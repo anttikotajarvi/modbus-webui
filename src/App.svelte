@@ -1,14 +1,42 @@
 <script lang="ts">
-  /* eslint-disable @typescript-eslint/no-unused-vars */
   import './app.css'
-  import ConnectForm from '@/ui/ConnectForm.svelte'
+
   import { ModbusRTU } from 'modbus-webserial'
+  import { onMount } from 'svelte'
+
+  import { activeProfileLoc, activeNametableLoc, createLibraryStore } from './sys/state'
+  import { createEmptyLibrary } from './sys/library/defaults'
+  import { loadLibrary, normalizeLibrary, saveLibrary, serializeLibrary } from './sys/library'
+  import type { LibraryData } from './sys/library/types'
+  import { debounce } from '@/sys/generic/helpers'
+  import { createPersistence, parseEnvelope } from './sys/generic/persistence'
+  import { exportFilename } from './sys/storage'
+  import { createModbusClientProcedures } from './sys/modbus/gateway'
+  import type { LibraryStatus } from './sys/types'
+  import { ok, resErr, type Result } from './types/generic'
+  import { exportFile } from './util/dom'
+  import { makeRef } from './util/ref'
+
   import type { ConnectStatus } from '@/types/comp'
-  import ReadPanel from '@/ui/panels/ReadPanel.svelte'
-  import type { ReadResponse, ReadQuery, WriteQuery, WriteResponse } from '@/sys/modbus'
-  import { onMount, setContext } from 'svelte'
-  import WritePanel from '@/ui/panels/WritePanel.svelte'
+  import { performConnect, performDisconnect } from './actions/connection'
+  import { primeConsoleCommands } from './actions/console-commands'
+  import type { PersistenceActions } from './actions/persistence'
+  import { useAlert } from '@/ui/alert/context'
+  import { modalsInitial, type Modals } from './ui/modals'
+
+  import { key } from 'svimmer-store/helpers/selectors'
+
+  import SystemAlert from '@/ui/alert/SystemAlert.svelte'
+  import ConnectForm from '@/ui/ConnectForm.svelte'
   import TopMenu from '@/ui/TopMenu.svelte'
+  import ManageStorageModal from './ui/modals/ManageStorageModal.svelte'
+  import CreateProfileModal from '@/ui/modals/CreateProfileModal.svelte'
+  import NametableModal from '@/ui/modals/NametableModal.svelte'
+  import ReadPanel from '@/ui/panels/ReadPanel.svelte'
+  import QuickWritePanel from '@/ui/panels/QuickWritePanel.svelte'
+  import WritePanel from '@/ui/panels/WritePanel.svelte'
+
+  const alert = useAlert()
 
   // ------------------------
   // Modbus client setup
@@ -19,8 +47,6 @@
     msg: '',
     error: false,
   })
-
-  import { debounce } from '@/sys/generic/helpers'
 
   let modals = $state<Modals>(modalsInitial)
 
@@ -73,19 +99,18 @@
       const { err } = persistLibrary()
       if (err) console.error('Autosave failed:', err)
     }
-    window.addEventListener('beforeunload', flush)
-    document.addEventListener('visibilitychange', () => {
+    const flushWhenHidden = () => {
       if (document.visibilityState === 'hidden') flush()
-    })
+    }
+    window.addEventListener('beforeunload', flush)
+    document.addEventListener('visibilitychange', flushWhenHidden)
     return () => {
       window.removeEventListener('beforeunload', flush)
-      document.removeEventListener('visibilitychange', flush as any)
+      document.removeEventListener('visibilitychange', flushWhenHidden)
     }
   })
 
   /* Derived references */
-  const activeProfileTagRef = lib.focus((x) => x.activeProfileTag)
-
   const profileRef = lib.follow(activeProfileLoc)
   const activeNametableTagRef = profileRef.focus(key('activeNametable'))
 
@@ -94,13 +119,6 @@
   const shortcutsRef = profileRef.focus(key('writeShortcuts'))
 
   const connectionSettingsRef = profileRef.focus(key('connectionSettings'))
-
-  /* Domain Operation */
-  function createProfile(id: ProfileTag, template: 'default' | 'current') {
-    const data = template === 'current' ? structuredClone(profileRef.value()) : createEmptyProfile()
-
-    lib.transact(begin(setProfile(id, data), setActiveProfile(id)))
-  }
 
   // save impl used by both manual + autosave
   function persistLibrary(): Result<true> {
@@ -120,16 +138,16 @@
     const setLibrary = (data: LibraryData) => {
       lib.set(data)
       persistLibrary()
-      alert.success('Library imported successfully.')
+      alert.success('Library Imported Successfully.')
     }
     return {
       saveLibrary: () => {
-        if (persistLibrary().val) alert.success('Library saved to localStorage.')
+        if (persistLibrary().val) alert.success('Library Saved to localStorage.')
       },
       exportLibrary: () => {
         const data = JSON.stringify(serializeLibrary(lib.value()))
         exportFile(exportFilename, new Blob([data], { type: 'application/json' }))
-        alert.success('Library exported successfully.')
+        alert.success('Library Exported Successfully.')
       },
       setLibrary,
 
@@ -146,7 +164,7 @@
         } catch (err) {
           console.error('Import failed:', err)
           const msg = err instanceof Error ? err.message : String(err)
-          alert.error(`Import failed: ${msg}`)
+          alert.error(`Import Failed: ${msg}`)
         }
       },
     }
@@ -164,41 +182,6 @@
   function handleOnDisconnect() {
     performDisconnect(client, conn)
   }
-
-  import {
-    activeProfileLoc,
-    createLibraryStore,
-    activeNametableLoc,
-    setActiveProfile,
-    setProfile,
-  } from './sys/state'
-  import { useAlert } from '@/ui/alert/context'
-  import QuickWritePanel from '@/ui/panels/QuickWritePanel.svelte'
-  import ManageStorageModal from './ui/modals/ManageStorageModal.svelte'
-  import CreateProfileModal from '@/ui/modals/CreateProfileModal.svelte'
-  import NametableSetModal from '@/ui/modals/NametableModal.svelte'
-  import SystemAlert from '@/ui/alert/SystemAlert.svelte'
-  import { loadLibrary, normalizeLibrary, saveLibrary, serializeLibrary } from './sys/library'
-  import { createEmptyLibrary, createEmptyProfile } from './sys/library/defaults'
-  import { createPersistence, parseEnvelope } from './sys/generic/persistence'
-  import { SCRATCH_ID, type LibraryData, type ProfileTag } from './sys/library/types'
-  import { STORAGE_VERSION } from './sys/library/versions/current'
-  import { resErr, ok, type Result } from './types/generic'
-
-  import type { LibraryStatus } from './sys/types'
-  import { modalsInitial, type Modals } from './ui/modals'
-  import { begin, setKey } from 'svimmer-store/helpers/transactors'
-  import { key } from 'svimmer-store/helpers/selectors'
-  import { performConnect, performDisconnect } from './actions/connection'
-  import type { PersistenceActions } from './actions/persistence'
-  import { makeRef } from './util/ref'
-  import { createModbusClientProcedures } from './sys/modbus/gateway'
-  import NametableModal from '@/ui/modals/NametableModal.svelte'
-  import { exportFile } from './util/dom'
-  import { exportFilename } from './sys/storage'
-  import { primeConsoleCommands } from './actions/console-commands'
-
-  const alert = useAlert()
 </script>
 
 <div class="flex min-h-dvh flex-col">

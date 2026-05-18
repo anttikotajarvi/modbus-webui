@@ -76,7 +76,7 @@
 
   const statusClass = $derived(status.status === 'connected' ? 'bg-green-500 text-white' : '')
 
-  const statusMessage = $derived(status.msg.length === 0 ? 'No message available' : status.msg)
+  const statusMessage = $derived(status.msg.length === 0 ? 'No Message Available' : status.msg)
 
   function handleSubmit(event: SubmitEvent) {
     event.preventDefault()
@@ -148,7 +148,7 @@
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <Label for="connect-baud-rate" class="text-xs text-muted-foreground">Baud rate</Label>
+          <Label for="connect-baud-rate" class="text-xs text-muted-foreground">Baud Rate</Label>
 
           <Input
             id="connect-baud-rate"
@@ -162,7 +162,7 @@
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <Label for="connect-data-bits" class="text-xs text-muted-foreground">Data bits</Label>
+          <Label for="connect-data-bits" class="text-xs text-muted-foreground">Data Bits</Label>
 
           <Select.Root
             type="single"
@@ -204,7 +204,7 @@
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <Label for="connect-stop-bits" class="text-xs text-muted-foreground">Stop bits</Label>
+          <Label for="connect-stop-bits" class="text-xs text-muted-foreground">Stop Bits</Label>
 
           <Select.Root
             type="single"
@@ -251,7 +251,7 @@
               class="z-50 grid w-[min(28rem,calc(100vw-2rem))] gap-3 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-open:animate-in data-closed:animate-out data-closed:fade-out-0 data-open:fade-in-0 data-closed:zoom-out-95 data-open:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
             >
               <div class="space-y-1">
-                <p class="text-sm font-medium leading-none">Advanced connection options</p>
+                <p class="text-sm font-medium leading-none">Advanced Connection Options</p>
                 <p class="text-xs text-muted-foreground">
                   Tune WebSerial timing and Modbus RTU CRC handling.
                 </p>
@@ -277,7 +277,7 @@
 
                 <div class="flex flex-col gap-1.5">
                   <Label for="connect-post-timeout-wait" class="text-xs text-muted-foreground">
-                    Post-timeout wait (ms)
+                    Post-timeout Wait (ms)
                   </Label>
 
                   <Input
@@ -294,7 +294,7 @@
 
                 <div class="flex flex-col gap-1.5">
                   <Label for="connect-inter-request-delay" class="text-xs text-muted-foreground">
-                    Inter-request delay (ms)
+                    Inter-request Delay (ms)
                   </Label>
 
                   <Input
@@ -311,7 +311,7 @@
 
                 <div class="flex flex-col gap-1.5">
                   <Label for="connect-crc-policy" class="text-xs text-muted-foreground"
-                    >CRC policy</Label
+                    >CRC Policy</Label
                   >
 
                   <Select.Root

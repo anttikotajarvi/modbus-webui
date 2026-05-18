@@ -2,11 +2,7 @@
   import * as Menubar from '$lib/components/ui/menubar'
   import { Separator } from '$lib/components/ui/separator'
   import { performDeleteProfile } from '@/actions/profile'
-  import {
-    SCRATCH_ID,
-    type LibraryData,
-    type ProfileTag,
-  } from '@/sys/library/types'
+  import { SCRATCH_ID, type LibraryData, type ProfileTag } from '@/sys/library/types'
   import { activeProfileLoc, nametableKeys, profileKeys } from '@/sys/state'
   import type { SvimmerWriter } from 'svimmer-store'
   import { self } from 'svimmer-store/helpers/accessors'
@@ -20,22 +16,25 @@
     persistenceActions,
     libStatus,
   }: {
-    lib: SvimmerWriter<LibraryData>,
-    modals: Modals,
+    lib: SvimmerWriter<LibraryData>
+    modals: Modals
     persistenceActions: PersistenceActions
     libStatus: LibraryStatus
   } = $props()
 
   // State handles
+  // svelte-ignore state_referenced_locally
   const profileRef = lib.follow(activeProfileLoc)
 
-  const profilesRef = lib.focus(x => x.profiles)
-  const nametablesRef = lib.focus(x => x.nametables);
+  // svelte-ignore state_referenced_locally
+  const profilesRef = lib.focus((x) => x.profiles)
+  // svelte-ignore state_referenced_locally
+  const nametablesRef = lib.focus((x) => x.nametables)
 
-  let activeProfileTagRef = lib.focus(x => x.activeProfileTag);
-  let selectedNtTagRef = profileRef.focus(x => x.activeNametable);
-  
-  
+  // svelte-ignore state_referenced_locally
+  let activeProfileTagRef = lib.focus((x) => x.activeProfileTag)
+  let selectedNtTagRef = profileRef.focus((x) => x.activeNametable)
+
   // Local UI
   let activeProfileTag = $derived($activeProfileTagRef.read(self()))
   let selectedNtTag = $derived($selectedNtTagRef.read(self()))
@@ -57,7 +56,6 @@
       ? `${selectedNtTag.slice(0, TAG_MAX_LENGTH)}...`
       : selectedNtTag
   })
-
 
   function onProfileDelete(tag: ProfileTag | null) {
     performDeleteProfile(lib, tag)
@@ -82,7 +80,7 @@
       <Menubar.Trigger>Profiles</Menubar.Trigger>
       <Menubar.Content>
         {#if profileTags.length === 1 && profileTags[0] === SCRATCH_ID}
-          <Menubar.Item disabled>No profiles</Menubar.Item>
+          <Menubar.Item disabled>No Profiles</Menubar.Item>
         {:else}
           {#each profileTags as p (p)}
             {#if p !== SCRATCH_ID}
@@ -109,7 +107,7 @@
       <Menubar.Trigger>Name Tables</Menubar.Trigger>
       <Menubar.Content>
         {#if ntTags.length === 0}
-          <Menubar.Item disabled>No name tables</Menubar.Item>
+          <Menubar.Item disabled>No Name Tables</Menubar.Item>
         {:else}
           {#each ntTags as s (s)}
             <Menubar.Item onclick={() => selectedNtTagRef.set(s)}>
@@ -137,7 +135,7 @@
         <!-- fixed width so it sits at the right edge, content left-aligned -->
         <div class="w-[12rem] leading-tight text-left">
           <div class="h-3 flex items-center justify-between">
-            <span class="w-[90px] h-3 text-xs w-[8ch]">Current profile</span>
+            <span class="w-[90px] h-3 text-xs w-[8ch]">Current Profile</span>
 
             <button
               onclick={() => onProfileDelete(activeProfileTag)}
@@ -158,7 +156,7 @@
         <!-- fixed width so it sits at the right edge, content left-aligned -->
         <div class="w-[12rem] leading-tight text-left">
           <div class="h-3 flex items-center justify-between">
-            <span class="h-3 text-xs">Selected nametable</span>
+            <span class="h-3 text-xs">Selected Nametable</span>
           </div>
           <div class="h-3 text-xs mt-[2px]">
             <strong>{formattedNtsTag}</strong>
@@ -188,7 +186,10 @@
 
           <!-- bottom line: Save left, time right (no jumping) -->
           <div class="h-3 mt-[2px] flex items-center justify-between">
-            <button onclick={persistenceActions.saveLibrary} class="h-3 p-0 discrete text-xs text-emerald-500">
+            <button
+              onclick={persistenceActions.saveLibrary}
+              class="h-3 p-0 discrete text-xs text-emerald-500"
+            >
               Save
             </button>
             <span class="w-[100px] h-3 text-xs w-[8ch] text-right">
