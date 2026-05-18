@@ -14,11 +14,7 @@
   import { performAddShortcut } from '@/actions/profile'
   import * as Table from '$lib/components/ui/table'
 
-  import {
-    regPrefixes,
-    type WriteFunction,
-    type WriteResponse,
-  } from '@/sys/modbus'
+  import { regPrefixes, type WriteFunction, type WriteResponse } from '@/sys/modbus'
   import HexInput from '@/ui/generics/custom-input/HexInput.svelte'
   import { BINg, HEX } from '@/sys/generic/formatting'
   import type { ModbusClientProcedures } from '@/sys/modbus/gateway'
@@ -26,14 +22,16 @@
 
   let {
     id,
+    description,
     type,
     writeToClient,
     namesRef,
     shortcutsRef,
   }: {
     id: string
+    description?: string
     type: WriteFunction
-    writeToClient: ModbusClientProcedures["writeToClient"];
+    writeToClient: ModbusClientProcedures['writeToClient']
     namesRef: SvimmerReader<Nametable[NametableCategory] | undefined>
     shortcutsRef: SvimmerWriter<ProfileData['writeShortcuts']>
   } = $props()
@@ -156,8 +154,13 @@
     <Card.Header class="flex items-center justify-between gap-3">
       <div class="min-w-0">
         <h3 class="truncate font-semibold">
-          {type.replace(/_/g, ' ')}
+          {type}
         </h3>
+        {#if description}
+          <p class="text-xs text-muted-foreground">
+            {description}
+          </p>
+        {/if}
       </div>
 
       <form class="flex flex-wrap items-end gap-3" onsubmit={writeData}>

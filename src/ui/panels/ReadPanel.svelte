@@ -27,11 +27,12 @@
     id: string
     type: ReadFunction
     name?: string
+    description?: string
     namesRef: SvimmerReader<Nametable[NametableCategory] | undefined>
     readFromClient: ModbusClientProcedures['readFromClient']
   }
 
-  let { id, type, name, namesRef, readFromClient }: Props = $props()
+  let { id, type, name, description, namesRef, readFromClient }: Props = $props()
   const emptyNames = new Map<number, string>()
   let names = $derived($namesRef.value() ?? emptyNames)
 
@@ -103,11 +104,11 @@
     <Card.Header class="flex items-center justify-between gap-3">
       <div class="min-w-0">
         <h3 class="truncate font-semibold">
-          {name ?? type.replace(/_/g, ' ')}
+          {name ?? type}
         </h3>
-        {#if name}
+        {#if description}
           <p class="text-xs text-muted-foreground">
-            {type.replace(/_/g, ' ')}
+            {description}
           </p>
         {/if}
       </div>

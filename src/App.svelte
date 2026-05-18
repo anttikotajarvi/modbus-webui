@@ -317,12 +317,14 @@
             <div class="wrap grid gap-4 w-full max-w-[900px] mx-auto">
               <ReadPanel
                 id="rp-hr"
+                description="FC03"
                 type="read_holding_registers"
                 namesRef={nametableRef.focus(key('hregs'))}
                 readFromClient={clientProcedures.readFromClient}
               />
               <ReadPanel
                 id="rp-ir"
+                description="FC04"
                 type="read_input_registers"
                 namesRef={nametableRef.focus(key('iregs'))}
                 readFromClient={clientProcedures.readFromClient}
@@ -334,12 +336,14 @@
             <div class="wrap grid gap-4 w-full max-w-[900px] mx-auto">
               <ReadPanel
                 id="rp-c"
+                description="FC01"
                 type="read_coils"
                 namesRef={nametableRef.focus(key('coils'))}
                 readFromClient={clientProcedures.readFromClient}
               />
               <ReadPanel
                 id="rp-di"
+                description="FC02"
                 type="read_discrete_inputs"
                 namesRef={nametableRef.focus(key('dinputs'))}
                 readFromClient={clientProcedures.readFromClient}
@@ -355,6 +359,7 @@
           <QuickWritePanel {profileRef} nametable={nametableRef} writeToClient={clientProcedures.writeToClient} />
           <WritePanel
             id="wp-hr"
+            description="FC06 / FC16"
             type="write_registers"
             writeToClient={clientProcedures.writeToClient}
             namesRef={nametableRef.focus(key('hregs'))}
@@ -362,6 +367,7 @@
           />
           <WritePanel
             id="wp-c"
+            description="FC05 / FC15"
             type="write_coils"
             writeToClient={clientProcedures.writeToClient}
             namesRef={nametableRef.focus(key('coils'))}
