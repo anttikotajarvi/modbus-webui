@@ -66,38 +66,38 @@ function getConnectedClient(clientRef: Ref<ModbusRTU | null>): ModbusRTU {
   return client;
 }
 
-function runReadQuery(
+async function runReadQuery(
   client: ModbusRTU,
   query: ReadQuery,
 ): Promise<ReadResult> {
   switch (query.type) {
     case "read_input_registers":
-      return client.readInputRegisters(query.address, query.quantity);
+      return await client.readInputRegisters(query.address, query.quantity);
 
     case "read_holding_registers":
-      return client.readHoldingRegisters(query.address, query.quantity);
+      return await client.readHoldingRegisters(query.address, query.quantity);
 
     case "read_coils":
-      return client.readCoils(query.address, query.quantity);
+      return await client.readCoils(query.address, query.quantity);
 
     case "read_discrete_inputs":
-      return client.readDiscreteInputs(query.address, query.quantity);
+      return await client.readDiscreteInputs(query.address, query.quantity);
 
     default:
       throw new Error(`Unsupported read type: ${String(query.type)}`);
   }
 }
 
-function runWriteQuery(
+async function runWriteQuery(
   client: ModbusRTU,
   query: WriteQuery,
 ): Promise<unknown> {
   switch (query.type) {
     case "write_registers":
-      return writeOneOrMoreRegisters(client, query.address, query.values as number[]);
+      return await writeOneOrMoreRegisters(client, query.address, query.values as number[]);
 
     case "write_coils":
-      return writeOneOrMoreCoils(client, query.address, query.values as boolean[]);
+      return await writeOneOrMoreCoils(client, query.address, query.values as boolean[]);
 
     default:
       throw new Error(`Unsupported write type: ${String(query.type)}`);
