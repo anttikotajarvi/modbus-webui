@@ -245,8 +245,8 @@
     </Card.Header>
     <Card.Content>
       <div
-        class="rounded-lg p-3 text-sm transition-[background-color,border-color,box-shadow] border {valuesFocused
-          ? 'border-primary bg-secondary/70 ring-2 ring-primary/30'
+        class="rounded p-3 text-sm transition-[background-color,border-color,box-shadow] border-s-2 {valuesFocused
+          ? 'border-primary ring-2 ring-primary/30'
           : ''}"
       >
         {#if showToastMessage}

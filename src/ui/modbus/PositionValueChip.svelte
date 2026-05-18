@@ -24,7 +24,7 @@
 </script>
 
 <span
-  class={`inline-flex flex-col gap-0.5 rounded-md px-2 py-1 text-xs ${className}`}
+  class={`inline-flex flex-col gap-0.5 rounded-md px-2 py-1 ${className}`}
   title={`Address ${addressLabel} (${HEX(address, 4)})`}
 >
   <span class="uppercase tracking-wide opacity-70 text-[0.65rem]">
