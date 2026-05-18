@@ -155,7 +155,7 @@
   const clientProcedures = createModbusClientProcedures({ clientRef: client })
 
   /* Prime console commands */
-  primeConsoleCommands(persistenceActions, lib, persistLibrary);
+  primeConsoleCommands(persistenceActions, lib, persistLibrary)
 
   /* Handlers */
   function handleOnConnect() {
@@ -275,6 +275,7 @@
             type="write_registers"
             writeToClient={clientProcedures.writeToClient}
             namesRef={nametableRef.focus(key('hregs'))}
+            settingsRef={connectionSettingsRef}
             {shortcutsRef}
           />
           <WritePanel
@@ -283,6 +284,7 @@
             type="write_coils"
             writeToClient={clientProcedures.writeToClient}
             namesRef={nametableRef.focus(key('coils'))}
+            settingsRef={connectionSettingsRef}
             {shortcutsRef}
           />
         </div>

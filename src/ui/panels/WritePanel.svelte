@@ -4,13 +4,18 @@
   import { Button } from '$lib/components/ui/button'
   import { Label } from '$lib/components/ui/label'
   import { Separator } from '$lib/components/ui/separator'
-  import { ChevronUp } from 'lucide-svelte'
+  import { ChevronUp, OctagonX } from 'lucide-svelte'
   import HexArrayInput from '@/ui/generics/custom-input/HexArrayInput.svelte'
   import BinaryArrayInput from '@/ui/generics/custom-input/BinaryArrayInput.svelte'
   import { useAlert } from '@/ui/alert/context'
   import TagInput from '@/ui/generics/custom-input/TagInput.svelte'
   import type { SvimmerReader, SvimmerWriter } from 'svimmer-store'
-  import type { Nametable, NametableCategory, ProfileData } from '@/sys/library/types'
+  import type {
+    ConnectionSettings,
+    Nametable,
+    NametableCategory,
+    ProfileData,
+  } from '@/sys/library/types'
   import { performAddShortcut } from '@/actions/profile'
   import * as Table from '$lib/components/ui/table'
 
@@ -19,6 +24,8 @@
   import { BINg, HEX } from '@/sys/generic/formatting'
   import type { ModbusClientProcedures } from '@/sys/modbus/gateway'
   import { sv } from '@/util/sv.svelte'
+  import { ModbusCallPreview, PositionValueChip } from '@/ui/modbus'
+  import X from '@lucide/svelte/icons/x'
 
   let {
     id,
@@ -27,6 +34,7 @@
     writeToClient,
     namesRef,
     shortcutsRef,
+    settingsRef,
   }: {
     id: string
     description?: string
@@ -34,6 +42,7 @@
     writeToClient: ModbusClientProcedures['writeToClient']
     namesRef: SvimmerReader<Nametable[NametableCategory] | undefined>
     shortcutsRef: SvimmerWriter<ProfileData['writeShortcuts']>
+    settingsRef: SvimmerReader<ConnectionSettings>
   } = $props()
 
   let address = $state<number>(0)
@@ -43,8 +52,10 @@
   const emptyNames = new Map<number, string>()
   let names = $derived($namesRef.value() ?? emptyNames)
   let addressResolved = $derived(names.get(address))
+  let deviceId = $derived($settingsRef.value().deviceId)
 
   const rightValues = $derived(type === 'write_coils' ? bitValues : wordValues)
+  let valuesFocused = $state(false)
 
   let status = $state({ msg: '', error: false })
   function writeData() {
@@ -71,16 +82,6 @@
 
   let open = $state(true)
   const regPrefix = (n: number) => regPrefixes[type] + `${n + 1}`
-  let functionDisplayName = $derived(() => {
-    switch (type) {
-      case 'write_coils':
-        return bitValues.length == 1 ? 'write_single_coil' : 'write_multiple_coils'
-      case 'write_registers':
-        return wordValues.length == 1 ? 'write_single_register' : 'write_multiple_registers'
-      default:
-        return null
-    }
-  })
 
   let showToastMessage = $state(false)
   let toast = () => {
@@ -89,6 +90,23 @@
       showToastMessage = false
     }, 3000) // Hide after 3 seconds
   }
+
+  function handleValuesFocusIn() {
+    valuesFocused = true
+  }
+
+  function handleValuesFocusOut(event: FocusEvent) {
+    const container = event.currentTarget as HTMLElement
+    const nextTarget = event.relatedTarget as Node | null
+
+    if (!nextTarget || !container.contains(nextTarget)) valuesFocused = false
+  }
+
+  function handleClear() {
+    wordValues = [];
+    bitValues = [];
+  }
+
   function isQueryValid() {
     if (type === 'write_coils') {
       return bitValues.length > 0 && address >= 0 && address <= 0xffff
@@ -149,7 +167,7 @@
     >
   </Table.Row>
 {/snippet}
-<Collapsible.Root class="w-full">
+<Collapsible.Root bind:open class="w-full">
   <Card.Root class="w-full m-0">
     <Card.Header class="flex items-center justify-between gap-3">
       <div class="min-w-0">
@@ -175,7 +193,7 @@
               max={0xffff}
               display="auto"
               placeholder="0x0000"
-              class="h-9 w-40"
+              class="h-9 w-40 focus-visible:border-primary focus-visible:bg-secondary/70 focus-visible:text-primary focus-visible:ring-primary/30"
             />
             <p
               class="text-muted-foreground text-xs"
@@ -188,13 +206,17 @@
           </div>
         </div>
 
-        <div class="flex max-w-sm flex-col gap-1.5">
+        <div
+          class="flex max-w-sm flex-col gap-1.5"
+          onfocusin={handleValuesFocusIn}
+          onfocusout={handleValuesFocusOut}
+        >
           <Label for={id + '-write-panel-values'} class="text-muted-foreground">Add values</Label>
           {#if type === 'write_coils'}
             <BinaryArrayInput
               id={id + '-write-panel-values'}
               bind:value={bitValues}
-              class="h-9 w-40"
+              class="h-9 w-40 focus-within:bg-secondary/70 focus-within:text-primary focus-within:ring-primary/30"
               inputClass="w-full"
             />
           {:else if type === 'write_registers'}
@@ -204,7 +226,7 @@
               max={0xffff}
               display="auto"
               placeholder="0x0000"
-              inputClass="h-9 w-40"
+              inputClass="h-9 w-40 focus-visible:border-primary focus-visible:bg-secondary/70 focus-visible:text-primary focus-visible:ring-primary/30"
             />
           {/if}
         </div>
@@ -223,7 +245,11 @@
       </form>
     </Card.Header>
     <Card.Content>
-      <blockquote class="border-l-2 text-muted-foreground text-sm italic">
+      <div
+        class="rounded-lg p-3 text-sm transition-[background-color,border-color,box-shadow] border {valuesFocused
+          ? 'border-primary bg-secondary/70 ring-2 ring-primary/30'
+          : ''}"
+      >
         {#if showToastMessage}
           {#if status.error}
             <span class="text-red-500">{status.msg}</span>
@@ -231,35 +257,44 @@
             <span class="text-green-500">{status.msg}</span>
           {/if}
         {:else}
-          <span
-            class="inline-flex items-center text-background-muted gap-1 rounded-md px-2 py-0.5 font-mono"
-          >
-            {functionDisplayName()}
-          </span>
-          <span class="inline-flex items-center bg-outline gap-1 rounded-md px-2 py-0.5 font-mono">
-            <span>{HEX(address)}</span>
-            <span class="opacity-60"><bold>{regPrefix(address)}</bold></span>
-          </span>
-          {#each rightValues as v, i (i)}
-            <span
-              class="inline-flex items-center gap-1 rounded-md bg-secondary text-primary px-2 py-0.5 font-mono"
-            >
-              {#if type === 'write_registers'}
-                <span>{v}</span>
-                <span class="opacity-60">({HEX(v as number)})</span>
-              {:else if type === 'write_coils'}
-                <span>{v ? 1 : 0}</span>
-                <span class="opacity-60">({v})</span>
-              {/if}
-            </span>
-          {/each}
+          <div class="mb-2 flex flex-wrap items-center gap-2">
+            <span class="font-medium text-foreground">Values</span>
+            {#if rightValues.length > 0}
+              <Button variant="link" class="m-0 ml-auto h-[1em]" size={"sm"} onclick={handleClear}> Clear</Button>
+            {/if}
+          </div>
+          <div class="flex flex-wrap gap-2">
+            {#if rightValues.length === 0}
+              <span
+                class="inline-flex items-center rounded-md border border-dashed bg-background px-2 py-1 text-xs text-muted-foreground"
+              >
+                Focus Add values and enter a value to start the queue.
+              </span>
+            {:else}
+              {#each rightValues as v, i (i)}
+                <PositionValueChip
+                  address={address + i}
+                  addressLabel={regPrefix(address + i)}
+                  index={i}
+                  {type}
+                  value={v}
+                  class="text-blue-600 rounded-md border text-[1em]"
+                />
+              {/each}
+            {/if}
+          </div>
         {/if}
-      </blockquote>
+      </div>
     </Card.Content>
     <Collapsible.Content>
       <Separator orientation="horizontal" />
       <Card.Footer class="flex flex-col gap-4 items-start">
-        <span class="text-muted-foreground text-sm pt-4">Preview of write operation</span>
+        <div class="pt-4">
+          <p class="text-sm font-medium text-foreground">Address/value preview</p>
+          <p class="text-xs text-muted-foreground">
+            Each collected value maps to the next Modbus address from the configured start address.
+          </p>
+        </div>
         <Table.Root class="w-full bg-blue-50 dark:bg-blue-900/20">
           <Table.Header>
             {#if type === 'write_registers'}
@@ -268,7 +303,7 @@
                 <Table.Head class="w-28">Address</Table.Head>
                 <Table.Head>Name</Table.Head>
                 <Table.Head class="w-24 text-right">Decimal</Table.Head>
-                <Table.Head class="w-24">Bool</Table.Head>
+                <Table.Head class="w-24">Hex</Table.Head>
                 <Table.Head class="w-24">Binary</Table.Head>
               </Table.Row>
             {:else if type === 'write_coils'}
@@ -288,14 +323,14 @@
                 <Table.Row>
                   <Table.Cell class="font-medium">{regPrefix(address)}</Table.Cell>
                   <Table.Cell class="font-mono">{HEX(address, 4)}</Table.Cell>
+                  <Table.Cell class="truncate text-muted-foreground">No values queued</Table.Cell>
                   <Table.Cell class="text-blue-500 text-right font-mono"></Table.Cell>
                   <Table.Cell class="text-blue-500 font-mono"></Table.Cell>
                   <Table.Cell class="text-blue-500 font-mono"></Table.Cell>
                 </Table.Row>
               {:else}
                 {#each wordValues as v, i (i)}
-                  {@const thisAddress = address + i}
-                  {@render registerTableRow(thisAddress, v, i)}
+                  {@render registerTableRow(address, v, i)}
                 {/each}
               {/if}
             {:else if type === 'write_coils'}
@@ -303,18 +338,22 @@
                 <Table.Row>
                   <Table.Cell class="font-medium">{regPrefix(address)}</Table.Cell>
                   <Table.Cell class="font-mono">{HEX(address, 4)}</Table.Cell>
+                  <Table.Cell class="truncate text-muted-foreground">No values queued</Table.Cell>
                   <Table.Cell class="text-blue-500 text-right font-mono"></Table.Cell>
                   <Table.Cell class="text-blue-500 font-mono"></Table.Cell>
                 </Table.Row>
               {:else}
                 {#each bitValues as v, i (i)}
-                  {@const thisAddress = address + i}
-                  {@render coilTableRow(thisAddress, v, i)}
+                  {@render coilTableRow(address, v, i)}
                 {/each}
               {/if}
             {/if}
           </Table.Body>
         </Table.Root>
+        <div class="w-full rounded-lg border bg-muted/30 p-3">
+          <ModbusCallPreview {type} {address} values={rightValues} {deviceId} />
+        </div>
+
         <div class="w-full pt-4">
           <Separator orientation="horizontal" />
         </div>
