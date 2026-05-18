@@ -22,6 +22,7 @@
   import HexInput from '@/ui/generics/custom-input/HexInput.svelte'
   import { BINg, HEX } from '@/sys/generic/formatting'
   import type { ModbusClientProcedures } from '@/sys/modbus/gateway'
+  import { sv } from '@/util/sv.svelte'
 
   let {
     id,
@@ -114,7 +115,7 @@
     performAddShortcut(shortcutsRef, shortcutName, {
       type,
       address,
-      values: rightValues,
+      values: sv(rightValues),
     })
     toast()
     shortcutName = '' // Reset after saving

@@ -5,20 +5,15 @@
   import { Separator } from '$lib/components/ui/separator'
   import TagInput from '@/ui/generics/custom-input/TagInput.svelte'
   import { useAlert } from '@/ui/alert/context'
-  import type { SvimmerWriter } from 'svimmer-store'
+  import { deriveHandle, type SvimmerWriter } from 'svimmer-store'
   import type { LibraryData, Nametable, NametableTag } from '@/sys/library/types'
   import { deleteKey, setKey } from 'svimmer-store/helpers/transactors'
   import { createEmptyNametable } from '@/sys/library/defaults'
-  import { keysOf } from 'svimmer-store/helpers/accessors'
   import NametableEditor from '@/ui/nametables/NametableEditor.svelte'
   import { key } from 'svimmer-store/helpers/selectors'
+  import { keysOf } from 'svimmer-store/helpers/accessors'
+  import { readable, writable } from 'svelte/store'
 
-  // Minimal API:
-  // - open (bindable)
-  // - ntsIds: list of all available set ids
-  // - activeNtsId (bindable): which set is currently targeted (optional)
-  // - readNTS(id): returns the current NametableSet (from your library)
-  // - onSave(id, nts), onDelete(id), onCreate(id)
   let {
     open = $bindable<boolean>(false),
     activeTagRef,
@@ -32,8 +27,10 @@
   let tags = $derived($nametablesRef.read(keysOf()))
   // local selected id inside the modal (defaults to active or first)
   // svelte-ignore state_referenced_locally
-  let selectedTag = $state<NametableTag>(activeTagRef.value() ?? tags[0] ?? "");
-  let selectedNtRef = $derived(nametablesRef.focus(key(selectedTag)));
+  const selectedTag = writable(activeTagRef.value() ?? tags[0] ?? '')
+  let selectedNtRef = deriveHandle([selectedTag], () => {
+    return nametablesRef.focus(key($selectedTag))
+  })
 
   // creation dialog
   let newOpen = $state(false)
@@ -47,44 +44,43 @@
 
   const alert = useAlert()
 
-  let currentDirty = $state(false) // bound from NTSEditor via a separate prop
+  let currentDirty = $state(false)
 
   function onSelect(nextId: string) {
     if (currentDirty) {
       alert.info(`Discarded unsaved changes to ${selectedTag ?? 'current set'}`)
     }
-    selectedTag = nextId as NametableTag;
+    selectedTag.set(nextId as NametableTag)
   }
   function onCreate() {
     if (!newIdValid().ok || !newId) return
     const id = newId as NametableTag
     nametablesRef.transact(setKey(id, createEmptyNametable()))
-    selectedTag = id;
+    selectedTag.set(id)
     activeTagRef.set(id)
     newOpen = false
     newId = null
   }
   function onDelete() {
-    const id = selectedTag;
+    const id = $selectedTag
+
     const res = nametablesRef.transact(deleteKey(id))
     if (res) alert.info(`Deleted nametable "${id}" successfully.`)
-
-
+    selectedTag.set(tags[0] ?? '') // pick next or clear
   }
   function onSave(data: Nametable) {
-    const id = selectedTag;
-    nametablesRef.transact(setKey(id, data));
-    alert.success("Nametable saved!", "Saved " + id);
-    selectedTag = tags[0] ?? ""; // pick next or clear
+    const id = $selectedTag
+    nametablesRef.transact(setKey(id, data))
+    alert.success('Nametable saved!', 'Saved ' + id)
   }
 </script>
 
 <Dialog.Root bind:open>
   <Dialog.Content class="sm:max-w-[1000px]">
     <Dialog.Header>
-      <Dialog.Title>Edit name table sets</Dialog.Title>
+      <Dialog.Title>Edit nametables</Dialog.Title>
       <Dialog.Description class="text-sm text-muted-foreground">
-        Choose a set to edit. Changes are applied when you press <em>Save</em>.
+        Choose a nametable to edit. Changes are applied when you press <em>Save</em>.
       </Dialog.Description>
 
       <!-- Header toolbar -->
@@ -93,12 +89,12 @@
           <Select.Root
             disabled={tags.length === 0}
             type="single"
-            value={selectedTag ?? ''}
+            value={$selectedTag ?? ''}
             onValueChange={onSelect}
           >
             <Select.Trigger class="w-full h-9">
-              {#if selectedTag}{selectedTag}{:else}<span class="text-muted-foreground"
-                  >Select a set…</span
+              {#if $selectedTag}{$selectedTag}{:else}<span class="text-muted-foreground"
+                  >Select a nametable...</span
                 >{/if}
             </Select.Trigger>
             <Select.Content>
@@ -123,12 +119,13 @@
     </Dialog.Header>
 
     <!-- Body -->
-    {#if selectedTag}
+    {#if $selectedTag}
       <div class="mt-4">
-        {#key selectedTag}
+        {#key $selectedTag}
           <NametableEditor
+            name={$selectedTag}
             bind:dirty={currentDirty}
-            initialData={$selectedNtRef.value()}
+            initialData={selectedNtRef.value()}
             onsave={onSave}
             ondelete={onDelete}
           />

@@ -22,6 +22,21 @@ export function parseEnvelope(value: unknown): Result<Versioned<number, JSONValu
 
   return ok(data)
 }
+export function ensureEnvelope(value: unknown): Result<Versioned<number, JSONValue>> {
+  const { val, err } = safeJSONParse(value)
+  if (err) return resErr(err)
+
+  const { success, data, error } = versionedSchema.safeParse(val)
+  if (!success) {
+    // No version, assume V1
+    return ok({
+      version: 1,
+      data: val
+    } as Versioned<number, JSONValue>)
+  }
+
+  return ok(data)
+}
 export function createPersistence(storage: Storage): Persistence {
   return {
     fetchLibrary(key) {

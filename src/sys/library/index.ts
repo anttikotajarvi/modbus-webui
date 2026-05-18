@@ -2,7 +2,7 @@ import { ok, resErr, type Result } from '@/types/generic'
 import { type Persistence } from '../generic/persistence'
 import { getVersion, isVersionKey, migrateToLatest } from './versions'
 import { STORAGE_VERSION, type CurrentLibrary, type CurrentVersion } from './versions/current'
-import { type Versioned } from '../generic/versioning'
+import { versionedSchema, type Versioned } from '../generic/versioning'
 import type { JSONValue } from 'node_modules/superjson/dist/types'
 
 export const STORAGE_KEY = 'modbus-webui:local-library'

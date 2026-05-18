@@ -7,7 +7,8 @@ import type { JSONValue } from 'node_modules/superjson/dist/types'
 export const V2Parser: VersionedParser<V2Library, 2> = (blob: JSONValue) => {
   let obj
   try {
-    obj = SuperJSON.deserialize<JSONValue>(blob as object as SuperJSONResult)
+    const data = (blob as any).data
+    obj = SuperJSON.deserialize<JSONValue>(data as object as SuperJSONResult)
   } catch (e) {
     return resErr(new Error('Deserialization failed.', { cause: e }))
   }

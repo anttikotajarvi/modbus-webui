@@ -1,7 +1,7 @@
 {
-  "nametables": {
+  "nameTables": {
     "CO2CS1_10_25": {
-      "updatedAt": 1767264866301,
+      "updatedAt": 1755854498025,
       "names": {
         "iregs": [
           [0, "VERSION"],
@@ -79,7 +79,7 @@
   },
   "profiles": {
     "__scratch__": {
-      "nametableSetId": null,
+      "nameTableSetId": null,
       "layout": [],
       "connectionSettings": {
         "deviceId": 1,
@@ -89,7 +89,7 @@
       "updatedAt": 1755853471573
     },
     "ANTTI": {
-      "nametableSetId": "CO2CS1_10_25",
+      "nameTableSetId": "CO2CS1_10_25",
       "layout": [],
       "connectionSettings": {
         "deviceId": 1,

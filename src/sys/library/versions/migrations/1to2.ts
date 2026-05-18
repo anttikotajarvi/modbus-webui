@@ -10,7 +10,7 @@ export const migrate1to2: Migration<1, V1Library, 2, LibraryData> = {
     const lib = createEmptyLibrary(); // Scratch is ensured here
 
     /* Nametables */
-    Object.entries(value.data.nametables).forEach(([id, nts]) => {
+    Object.entries(value.data.nameTables).forEach(([id, nts]) => {
       lib.nametables[asNametableTag(id)] = structuredClone(nts.names)
     })
 
@@ -38,7 +38,7 @@ export const migrate1to2: Migration<1, V1Library, 2, LibraryData> = {
       }
 
       lib.profiles[asProfileTag(id)] = {
-        activeNametable: profile.nametableSetId as NametableTag | null,
+        activeNametable: profile.nameTableSetId as NametableTag | null,
         layout: structuredClone(profile.layout),
         connectionSettings: {
           deviceId: profile.connectionSettings.deviceId,

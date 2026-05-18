@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '$lib/components/ui/table';
-  import { BINg, HEX } from '@/sys/modbus';
-
+  import { BINg, HEX } from '@/sys/generic/formatting'
   type WordTableProps = {
     startAddress: number;
     words: (number | null)[];

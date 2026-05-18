@@ -4,6 +4,7 @@ export type Versioned<V extends number, T> = {
   version: V;
   data: T;
 };
+
 export const versionedSchema = z.object({
   version: z.uint32(),
   data: z.any()

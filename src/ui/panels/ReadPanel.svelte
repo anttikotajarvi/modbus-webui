@@ -23,16 +23,16 @@
   import type { ModbusClientProcedures } from '@/sys/modbus/gateway'
   import type { SvimmerReader } from 'svimmer-store'
   import { HEX } from '@/sys/generic/formatting'
-  type Props = { 
-    id: string; 
-    type: ReadFunction; 
-    name?: string; 
-    namesRef: SvimmerReader<Nametable[NametableCategory] | undefined>;
-    readFromClient: ModbusClientProcedures["readFromClient"]
+  type Props = {
+    id: string
+    type: ReadFunction
+    name?: string
+    namesRef: SvimmerReader<Nametable[NametableCategory] | undefined>
+    readFromClient: ModbusClientProcedures['readFromClient']
   }
 
-  let { id, type, name,  namesRef, readFromClient }: Props = $props()
-  const emptyNames = new Map<number, string>();
+  let { id, type, name, namesRef, readFromClient }: Props = $props()
+  const emptyNames = new Map<number, string>()
   let names = $derived($namesRef.value() ?? emptyNames)
 
   let settings: RPanelSettings = $state<RPanelSettings>({
@@ -85,7 +85,6 @@
       })
   }
 
-
   let open = $state(true)
 
   const skeletonRes = () => {
@@ -97,7 +96,6 @@
   }
 
   let flash = $state(false)
-
 </script>
 
 <Collapsible.Root class="w-full">
@@ -191,7 +189,7 @@
     <Collapsible.Content>
       <Separator orientation="horizontal" />
       <div class="p-5 {flash ? 'flash' : ''}">
-        <Alert.Root variant={errorMsg ? 'destructive' : 'default'} class="bg-transparent">
+        <Alert.Root variant={errorMsg ? 'destructive' : 'default'}>
           {#if lastRes}
             <Alert.Title>
               <code>{lastRes.fromFunction}</code>
@@ -201,8 +199,12 @@
               )}
             </Alert.Title>
             <Alert.Description class="text-sm text-muted-foreground">
-              {errorMsg ?? 'Successful read'} <br />
-              {formatMs(elapsedSinceLastRefresh)} ago
+              {#if errorMsg}
+                {errorMsg}
+              {:else}
+                Successful read <br />
+                {formatMs(elapsedSinceLastRefresh)} ago
+              {/if}
             </Alert.Description>
           {:else}
             <Alert.Title>No data yet</Alert.Title>
@@ -216,14 +218,14 @@
             bits={lastRes ? (lastRes.data as boolean[]) : (skeletonRes().data as boolean[])}
             startAddress={lastRes ? lastRes.startAddress : settings.queryTemplate.address}
             regPrefix={regPrefixes[type]}
-            names={names}
+            {names}
           />
         {:else if type === 'read_holding_registers' || type === 'read_input_registers'}
           <WordTable
             words={lastRes ? (lastRes.data as number[]) : (skeletonRes().data as number[])}
             startAddress={lastRes ? lastRes.startAddress : settings.queryTemplate.address}
             regPrefix={regPrefixes[type]}
-            names={names}
+            {names}
           />
         {/if}
       </div>

@@ -20,6 +20,7 @@
   // numeric mirror for HexInput (it binds to numbers only)
   let token = $state(0)
   let inputEl = $state<HTMLInputElement | null>(null) // underlying <input> from HexInput
+  // svelte-ignore state_referenced_locally
   const inputId = id ?? `hexstack-${Math.random().toString(36).slice(2)}`
 
   const toHex = (n: number) => '0x' + (uppercaseHex ? n.toString(16).toUpperCase() : n.toString(16))

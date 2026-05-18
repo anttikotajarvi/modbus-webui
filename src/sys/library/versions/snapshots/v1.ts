@@ -7,7 +7,7 @@ import type { JSONValue } from "node_modules/superjson/dist/types";
 
 
 export type V1Library = {
-  nametables: Record<string, NametableSet>;
+  nameTables: Record<string, NametableSet>;
   profiles: Record<string, Configuration>;
   activeProfileTag: string | null;
 }
@@ -52,29 +52,29 @@ export const V1Serializer:LibSerializer<V1Library> = (lib) => {
 
 export function fromSerializable(_obj: SerializableLibrary): V1Library {
   const obj = structuredClone(_obj); // Ensure we don't mutate the original
-  const nametables: Record<string, NametableSet> = {};
-  for (const [tag, t] of Object.entries(obj.nametables)) {
-    nametables[tag] = {
+  const nameTables: Record<string, NametableSet> = {};
+  for (const [tag, t] of Object.entries(obj.nameTables)) {
+    nameTables[tag] = {
       updatedAt: t.updatedAt,
       names: fromSerializableNameBucketMap(t.names),
     };
   }
   return {
-    nametables,
+    nameTables,
     profiles: obj.profiles,
     activeProfileTag: obj.activeProfileTag ?? null,
   };
 }
 export function toSerializable(lib: V1Library): SerializableLibrary {
-  const nametables: Record<string, SerializableNametableSet> = {};
-  for (const [id, t] of Object.entries(lib.nametables)) {
-    nametables[id] = {
+  const nameTables: Record<string, SerializableNametableSet> = {};
+  for (const [id, t] of Object.entries(lib.nameTables)) {
+    nameTables[id] = {
       updatedAt: t.updatedAt,
       names: toSerializableNameBucketMap(t.names),
     };
   }
   return {
-    nametables,
+    nameTables,
     profiles: lib.profiles,
     activeProfileTag: lib.activeProfileTag ?? null,
   };
@@ -161,7 +161,7 @@ const writeQuerySchema = z.object({
   values: z.union([z.array(z.number()), z.array(z.boolean())]), // number[] | boolean[]
 })
 const ConfigurationSchema = z.object({
-  nametableSetId: z.nullable(z.string()),
+  nameTableSetId: z.nullable(z.string()),
   layout: z.optional(z.array(PanelLayoutItemSchema)), // Placeholder for future layout
   connectionSettings: ConnectionSettingsSchema,
   writeShortcuts: z.record(z.string(), writeQuerySchema),
@@ -173,7 +173,7 @@ type Configuration = z.infer<typeof ConfigurationSchema>
 // Library
 // -------------------------------------------------
 const SerializableLibrarySchema = z.object({
-  nametables: z.record(z.string(), SerializableNametableSetSchema),
+  nameTables: z.record(z.string(), SerializableNametableSetSchema),
   profiles: z.record(z.string(), ConfigurationSchema),
   activeProfileTag: z.nullable(z.string()),
 });

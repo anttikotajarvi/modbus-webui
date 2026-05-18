@@ -3,7 +3,6 @@
   import * as Table from '$lib/components/ui/table'
   import { Button } from '$lib/components/ui/button'
   import { Play, Trash2 } from 'lucide-svelte'
-  import { getContext } from 'svelte'
 
   import { regPrefixes, type WriteQuery, type WriteResponse } from '@/sys/modbus'
   import { useAlert } from '@/ui/alert/context'
@@ -12,12 +11,14 @@
   import { deleteKey } from 'svimmer-store/helpers/transactors'
   import { resolveAddressName } from '@/sys/state'
   import { HEX } from '@/sys/generic/formatting'
+  import type { ModbusClientProcedures } from '@/sys/modbus/gateway'
 
   type Props = {
     profileRef: SvimmerWriter<ProfileData>,
     nametable: SvimmerReader<Nametable | undefined>,
+    writeToClient: ModbusClientProcedures["writeToClient"]
   }
-  let { profileRef, nametable }: Props = $props()
+  let { profileRef, nametable, writeToClient }: Props = $props()
 
   // svelte-ignore state_referenced_locally
   const shortcuts = profileRef.focus(x => x.writeShortcuts)
@@ -26,7 +27,6 @@
   let rows = $derived(Object.entries($shortcuts.value()))
 
   // Execute write using app-provided context
-  const writeToClient = getContext<(q: WriteQuery) => Promise<WriteResponse>>('writeToClient')
   const alert = useAlert()
 
 
@@ -131,6 +131,6 @@
     {/if}
   </Card.Content>
   <Card.Footer class="text-xs text-muted-foreground">
-    Click a row (or <em>Run</em>) to execute immediately. Shorthands are stored in your current profile.
+    Click a row (or&nbsp; <em>Run</em>) to execute immediately. Shorthands are stored in your current profile.
   </Card.Footer>
 </Card.Root>

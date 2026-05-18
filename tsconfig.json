@@ -1,18 +1,16 @@
 {
   "files": [],
   "lib": ["dom", "es2020"],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "compilerOptions": {
     "noEmit": true,
     "baseUrl": ".",
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["src/*"],
       "$lib": ["src/lib"],
       "$lib/*": ["src/lib/*"]
     }
-  }
+  },
+  "exclude": ["node_modules"]
 }
-

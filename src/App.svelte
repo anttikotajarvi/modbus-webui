@@ -128,17 +128,20 @@
   /* Library */
   const lib = createLibraryStore(
     (() => {
-      const { val } = loadLibrary(P)
-      if (!val) return createEmptyLibrary()
+      const { val, err } = loadLibrary(P)
+      if (!val) {
+        console.error(err)
+        return createEmptyLibrary()
+      }
       return val.data as LibraryData
     })(),
   )
-
   let libStatus = $state<LibraryStatus>({
     dirty: false,
     lastSavedAt: null,
   })
   {
+    let _ignoreDirty = true
     // Autosaving
     lib.subscribe(() => {
       if (_ignoreDirty) return
@@ -148,7 +151,6 @@
     })
 
     // ignore the first reactive pass (initial load)
-    let _ignoreDirty = true
     queueMicrotask(() =>
       requestAnimationFrame(() => {
         _ignoreDirty = false
@@ -178,12 +180,13 @@
   })
 
   /* Derived references */
-  const activeProfileTagRef = lib.focus((x) => x.activeProfileTag)!
+  const activeProfileTagRef = lib.focus((x) => x.activeProfileTag)
 
   const profileRef = lib.follow(activeProfileLoc)
   const activeNametableTagRef = profileRef.focus(key('activeNametable'))
 
   const nametableRef = lib.follow(activeNametableLoc)
+
   const shortcutsRef = profileRef.focus(key('writeShortcuts'))
 
   const connectionSettingsRef = profileRef.focus(key('connectionSettings'))
@@ -271,13 +274,13 @@
   import { loadLibrary, normalizeLibrary, saveLibrary, serializeLibrary } from './sys/library'
   import { createEmptyLibrary, createEmptyProfile } from './sys/library/defaults'
   import { createPersistence, parseEnvelope } from './sys/generic/persistence'
-  import { type LibraryData, type ProfileTag } from './sys/library/types'
+  import { SCRATCH_ID, type LibraryData, type ProfileTag } from './sys/library/types'
   import { STORAGE_VERSION } from './sys/library/versions/current'
   import { resErr, ok, type Result } from './types/generic'
 
   import type { LibraryStatus } from './sys/types'
   import { modalsInitial, type Modals } from './ui/modals'
-  import { begin } from 'svimmer-store/helpers/transactors'
+  import { begin, setKey } from 'svimmer-store/helpers/transactors'
   import { key } from 'svimmer-store/helpers/selectors'
   import { performConnect, performDisconnect } from './actions/connection'
   import type { PersistenceActions } from './actions/persistence'
@@ -297,7 +300,7 @@
   <TopMenu {lib} bind:modals {persistenceActions} {libStatus} />
 
   <ConnectForm
-    settings={connectionSettingsRef}
+    settingsRef={connectionSettingsRef}
     status={conn}
     onsubmit={handleOnConnect}
     ondisconnect={handleOnDisconnect}
@@ -349,7 +352,7 @@
       <!-- C2: WRITES (right rail only when the parent hits 1480px; stacked otherwise) -->
       <aside class="min-w-0 w-full space-y-4 self-start min-[1480px]:sticky min-[1480px]:top-4">
         <div class="mx-auto w-full max-w-[900px] grid gap-4">
-          <QuickWritePanel {profileRef} nametable={nametableRef} />
+          <QuickWritePanel {profileRef} nametable={nametableRef} writeToClient={clientProcedures.writeToClient} />
           <WritePanel
             id="wp-hr"
             type="write_registers"

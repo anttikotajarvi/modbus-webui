@@ -8,14 +8,17 @@
   import type { Nametable, NametableCategory } from '@/sys/library/types'
   import { fromNametableString, toNametableString } from './NametableEditor'
   import { registerLabels as labels } from '@/sys/modbus'
+  import { sv } from '@/util/sv.svelte'
 
   // Edits a single NameBucketMap (iregs, hregs, coils, dinputs)
   let {
+    name,
     initialData,
     onsave,
     ondelete,
     dirty = $bindable<boolean>(false),
   }: {
+    name: string,
     initialData: Nametable
     onsave: (nt: Nametable) => void
     ondelete: () => void
@@ -33,7 +36,9 @@
   )
 
   // working copy + json text
+  // svelte-ignore state_referenced_locally
   let working = $state<Nametable>(structuredClone(initialData))
+  // svelte-ignore state_referenced_locally
   let jsonText = $state<string>(toNametableString(initialData))
   let parseError = $state<string | null>(null)
 
@@ -91,13 +96,14 @@
   function resetToInitial() {
     working = structuredClone(initialData)
     jsonText = toNametableString(initialData)
+    dirty = false
     parseError = null
   }
   function saveNow() {
     applyFromJson()
     if (parseError) return
     dirty = false
-    onsave(working)
+    onsave(sv(working))
   }
 
   /* Tabs state */
@@ -110,7 +116,11 @@
 
 <Card.Root class="w-full">
   <Card.Header>
-    <Card.Title>Name table set</Card.Title>
+    <Card.Title>Nametable <code
+ class="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold"
+>
+ {name}
+</code></Card.Title>
     <Card.Description class="text-sm text-muted-foreground">
       Edit via the table editor or paste JSON. Addresses are 0x0000–0xFFFF.
     </Card.Description>

@@ -4,15 +4,20 @@
   import { Label } from '$lib/components/ui/label'
   import { Textarea } from '$lib/components/ui/textarea'
   import { Separator } from '$lib/components/ui/separator'
+  import * as Alert from "$lib/components/ui/alert"
   import * as RadioGroup from '$lib/components/ui/radio-group'
 
   import type { LibraryData, NametableTag, ProfileTag } from '@/sys/library/types'
-  import { normalizeLibrary } from '@/sys/library'
-  import { parseEnvelope } from '@/sys/generic/persistence'
-  import { type CurrentVersion } from '@/sys/library/versions/current'
+  import { normalizeLibrary, serializeLibrary } from '@/sys/library'
+  import { ensureEnvelope, parseEnvelope } from '@/sys/generic/persistence'
+  import { STORAGE_VERSION, type CurrentVersion } from '@/sys/library/versions/current'
   import { openFiles } from '@/sys/generic/open-file'
   import type { SvimmerReader } from 'svimmer-store'
-
+  import { useAlert } from '../alert/context'
+  import { sv } from '@/util/sv.svelte'
+  import { createEmptyLibrary } from '@/sys/library/defaults'
+  import { FileDown, FileUp } from 'lucide-svelte'
+  const alert = useAlert()
   let {
     open = $bindable<boolean>(false),
     libRef,
@@ -37,14 +42,19 @@
   let mode = $state<'replace' | 'merge'>('replace')
 
   let loadedStats = $derived.by(() => {
-    if (!loaded) return null;
+    if (!loaded) return null
     return stats(loaded.data)
   })
 
-
   // merge planning
-  let conflicts = $state<{ profiles: ProfileTag[]; sets: NametableTag[] }>({ profiles: [], sets: [] })
-  let additions = $state<{ profiles: ProfileTag[]; sets: NametableTag[] }>({ profiles: [], sets: [] })
+  let conflicts = $state<{ profiles: ProfileTag[]; sets: NametableTag[] }>({
+    profiles: [],
+    sets: [],
+  })
+  let additions = $state<{ profiles: ProfileTag[]; sets: NametableTag[] }>({
+    profiles: [],
+    sets: [],
+  })
   let choices = $state<{
     profiles: Record<ProfileTag, 'current' | 'new'>
     sets: Record<NametableTag, 'current' | 'new'>
@@ -56,8 +66,7 @@
     sets: Object.keys(l.nametables ?? {}).length,
   })
 
-  /* Domain procedures */ 
-
+  /* Domain procedures */
   function parseAndLoad(text: string) {
     loadError = null
     loaded = null
@@ -65,25 +74,27 @@
       loadError = e?.message ?? String(e)
     }
 
-    const parseRes = parseEnvelope(text)
-    if(parseRes.err) {
-      err(parseRes.err);
-      return;
+    let parseRes = ensureEnvelope(text)
+    if (parseRes.err) {
+      err(parseRes.err)
+      return
     }
 
-
-    const normRes = normalizeLibrary(parseRes.val);
-    if(normRes.err) {
-      err(normRes.err);
-      return;
+    const normRes = normalizeLibrary(parseRes.val)
+    if (normRes.err) {
+      err(normRes.err)
+      return
     }
 
-    //{
-    //  const initialVersion = parseRes.val.version;
-    //  const normVersion = normRes.val.version;
-    //  if(normVersion !== initialVersion) 
-    //    alert.info("")
-    //}
+    {
+      const initialVersion = parseRes.val.version
+      const normVersion = normRes.val.version
+      if (normVersion !== initialVersion)
+        alert.info(
+          'Upgraded input data',
+          `Upgraded library data from v${initialVersion} to v${normVersion}`,
+        )
+    }
 
     loaded = normRes.val //structuredClone(normRes.val)
     mode = 'replace'
@@ -97,7 +108,7 @@
       choices = { profiles: {}, sets: {} }
       return
     }
-    const current = libRef.value();
+    const current = libRef.value()
     const curP = new Set(Object.keys(current.profiles) as ProfileTag[])
     const curS = new Set(Object.keys(current.nametables) as NametableTag[])
     const newP = Object.keys(loaded.data.profiles) as ProfileTag[]
@@ -117,24 +128,25 @@
       sets: Object.fromEntries(setConf.map((k) => [k, 'new' as const])),
     }
   }
-  /* Handlers */ 
+  /* Handlers */
   async function handlePickFile() {
     const file = await openFiles({
       accept: ['.json', 'application/json'],
-      multiple: false
+      multiple: false,
     })
-    if(!file) return;
+    if (!file) return
 
-    const text = await file.text();
+    const text = await file.text()
+    newRaw = text
     parseAndLoad(text)
   }
 
-  function handleChooseAllProfiles(which: 'current' | 'new',) {
+  function handleChooseAllProfiles(which: 'current' | 'new') {
     for (const k of conflicts.profiles) choices.profiles[k] = which
   }
-  function handleChooseAllNametables(which: 'current' | 'new',) {
+  function handleChooseAllNametables(which: 'current' | 'new') {
     for (const k of conflicts.sets) choices.sets[k] = which
-  }  
+  }
 
   function handleClear() {
     newRaw = ''
@@ -150,13 +162,13 @@
     if (!loaded) return
 
     if (mode === 'replace') {
-      onImport(loaded.data)
+      onImport(sv(loaded.data))
       open = false
       return
     }
     /* Merge */
-    const current = structuredClone(libRef.value());
-    const merged = structuredClone(current);
+    const current = structuredClone(libRef.value())
+    const merged = structuredClone(current)
 
     // Additions
     for (const k of additions.profiles) merged.profiles[k] = loaded.data.profiles[k]
@@ -164,22 +176,27 @@
 
     // Conflicts
     for (const k of conflicts.profiles) {
-      merged.profiles[k] = choices.profiles[k] === 'new' ? loaded.data.profiles[k] : current.profiles[k]
+      merged.profiles[k] =
+        choices.profiles[k] === 'new' ? loaded.data.profiles[k] : current.profiles[k]
     }
     for (const k of conflicts.sets) {
-      merged.nametables[k] = choices.sets[k] === 'new' ? loaded.data.nametables[k] : current.nametables[k]
+      merged.nametables[k] =
+        choices.sets[k] === 'new' ? loaded.data.nametables[k] : current.nametables[k]
     }
 
     // Keep current activeProfileTag
     merged.activeProfileTag = current.activeProfileTag ?? null
 
-    onImport(merged)
+    onImport(sv(merged))
     open = false
   }
   function handleLoadTemplate() {
-    return;
-    // TODO
-    //parseAndLoad(newRaw)
+    const lib = serializeLibrary(createEmptyLibrary())
+    newRaw = JSON.stringify(lib.val, null, 2)
+  }
+  function handleJsonIputChange(str: string) {
+    if (str.length == 0) return
+    parseAndLoad(str)
   }
 </script>
 
@@ -195,50 +212,79 @@
     <!-- Import row -->
     <div class="flex flex-wrap items-end gap-2">
       <div class="flex items-center gap-2">
-        <Button id="manage-storage-pick-json" variant="secondary" class="h-8 px-3 text-xs" onclick={handlePickFile}>Pick JSON</Button>
-        <Button id="manage-storage-export" variant="outline" class="h-8 px-3 text-xs" onclick={onExport}>Export current</Button>
-        <Button id="manage-storage-clear" variant="ghost" class="h-8 px-3 text-xs" onclick={handleClear}>Clear</Button>
+        <Button
+          id="manage-storage-pick-json"
+          variant="secondary"
+          class="h-8 px-3 text-xs"
+          onclick={handlePickFile}><FileUp />Pick File (.json)</Button
+        >
+        <Button
+          id="manage-storage-export"
+          variant="outline"
+          class="h-8 px-3 text-xs"
+          onclick={onExport}><FileDown />Export Current</Button
+        >
+        <Button
+          id="manage-storage-clear"
+          variant="ghost"
+          class="h-8 px-3 text-xs"
+          onclick={handleClear}>Clear</Button
+        >
       </div>
       <div class="ml-auto text-xs text-muted-foreground">
-        Current: {currentStats.profiles} profiles • {currentStats.sets} name-table sets
+        Current: {currentStats.profiles} profiles • {currentStats.sets} nametables
       </div>
     </div>
 
     <div class="mt-2">
-      <Label for="manage-storage-json-field" class="text-xs mb-1 block">Paste JSON</Label>
+      <div class="flex">
+        <Label for="manage-storage-json-field" class="text-xs mb-1 block">Paste JSON</Label>
+        <button
+          id="manage-storage-load-template"
+          onclick={handleLoadTemplate}
+          class="discrete text-xs m-1 ml-auto text-blue-500 float-right"
+          >Load library template</button
+        >
+      </div>
       <Textarea
         id="manage-storage-json-field"
-        class="h-28 resize-y font-mono text-xs"
+        class="h-28 resize-y font-mono text-xs break-all"
         placeholder="…or paste exported library JSON here"
         bind:value={newRaw}
-        onchange={(e: Event) => parseAndLoad((e.target as HTMLTextAreaElement).value)}
+        onchange={(e: Event) => handleJsonIputChange((e.target as HTMLTextAreaElement).value)}
       />
+      &nbsp;
       {#if loadError}
-        <div class="mt-2 rounded border border-destructive/40 bg-destructive/10 p-2 text-xs text-destructive">
-          {loadError}
-        </div>
+        <Alert.Root variant="destructive">
+          <Alert.Title>Invalid library</Alert.Title>
+          <Alert.Description>{loadError}</Alert.Description>
+        </Alert.Root>
+      {:else if loaded}
+        <Alert.Root variant="success">
+          <Alert.Title>Valid Library!</Alert.Title>
+        </Alert.Root>
       {/if}
-    <button id="manage-storage-load-template" onclick={handleLoadTemplate} class="discrete text-xs m-1 ml-auto text-blue-500 float-right">Load library template</button>
-
     </div>
     <Separator class="my-4" />
 
     <!-- Mode (shadcn RadioGroup) -->
     <div class="space-y-3">
-      <RadioGroup.Root class="flex flex-wrap gap-6 text-sm" bind:value={mode}>
+      <RadioGroup.Root class="flex flex-wrap gap-6 text-sm" bind:value={mode} disabled={!loaded}>
         <div class="flex items-center gap-2">
-          <RadioGroup.Item id="manage-storage-mode-replace" value="replace" />
+          <RadioGroup.Item id="manage-storage-mode-replace" value="replace" disabled={!loaded} />
           <Label for="manage-storage-mode-replace">Replace current library</Label>
         </div>
         <div class="flex items-center gap-2">
-          <RadioGroup.Item id="manage-storage-mode-merge" value="merge" disabled={!loaded} />
-          <Label for="manage-storage-mode-merge" class={!loaded ? 'opacity-50' : ''}>Merge libraries</Label>
+          <RadioGroup.Item id="manage-storage-mode-merge" value="merge" />
+          <Label for="manage-storage-mode-merge" class={!loaded ? 'opacity-50' : ''}
+            >Merge libraries</Label
+          >
         </div>
       </RadioGroup.Root>
 
       {#if loaded}
         <div class="text-xs text-muted-foreground">
-          Loaded: {loadedStats?.profiles} profiles • {loadedStats?.sets} name-table sets
+          Loaded: {loadedStats?.profiles} profiles • {loadedStats?.sets} nametables
         </div>
       {/if}
     </div>
@@ -251,14 +297,26 @@
             <div class="text-sm font-medium">Profiles</div>
             {#if conflicts.profiles.length}
               <div class="flex items-center gap-2">
-                <Button id="manage-storage-keep-current" variant="outline" class="h-7 px-2 text-xs" onclick={() => handleChooseAllProfiles('current')}>Keep current</Button>
-                <Button id="manage-storage-use-new" variant="outline" class="h-7 px-2 text-xs" onclick={() => handleChooseAllProfiles('new')}>Use new</Button>
+                <Button
+                  id="manage-storage-keep-current"
+                  variant="outline"
+                  class="h-7 px-2 text-xs"
+                  onclick={() => handleChooseAllProfiles('current')}>Keep current</Button
+                >
+                <Button
+                  id="manage-storage-use-new"
+                  variant="outline"
+                  class="h-7 px-2 text-xs"
+                  onclick={() => handleChooseAllProfiles('new')}>Use new</Button
+                >
               </div>
             {/if}
           </div>
           <Separator />
           <div class="p-2 text-xs">
-            <div class="mb-2 opacity-70">Add: {additions.profiles.length} • Conflicts: {conflicts.profiles.length}</div>
+            <div class="mb-2 opacity-70">
+              Add: {additions.profiles.length} • Conflicts: {conflicts.profiles.length}
+            </div>
             <div class="h-40 overflow-y-auto pr-2">
               {#if conflicts.profiles.length === 0}
                 <div class="opacity-60">No profile name conflicts.</div>
@@ -267,14 +325,17 @@
                   {#each conflicts.profiles as k (k)}
                     <li class="flex items-center justify-between gap-3 py-1">
                       <div class="truncate font-mono">{k}</div>
-                      <RadioGroup.Root class="flex items-center gap-3" bind:value={choices.profiles[k]}>
+                      <RadioGroup.Root
+                        class="flex items-center gap-3"
+                        bind:value={choices.profiles[k]}
+                      >
                         <div class="flex items-center gap-1">
-                          <RadioGroup.Item id={'pc-'+k} value="current" />
-                          <Label for={'pc-'+k}>current</Label>
+                          <RadioGroup.Item id={'pc-' + k} value="current" />
+                          <Label for={'pc-' + k}>current</Label>
                         </div>
                         <div class="flex items-center gap-1">
-                          <RadioGroup.Item id={'pn-'+k} value="new" />
-                          <Label for={'pn-'+k}>new</Label>
+                          <RadioGroup.Item id={'pn-' + k} value="new" />
+                          <Label for={'pn-' + k}>new</Label>
                         </div>
                       </RadioGroup.Root>
                     </li>
@@ -291,17 +352,29 @@
             <div class="text-sm font-medium">Name table sets</div>
             {#if conflicts.sets.length}
               <div class="flex items-center gap-2">
-                <Button id="manage-storage-keep-all-current" variant="outline" class="h-7 px-2 text-xs" onclick={() => handleChooseAllNametables('current')}>Keep current</Button>
-                <Button id="manage-storage-use-all-new" variant="outline" class="h-7 px-2 text-xs" onclick={() => handleChooseAllNametables('new')}>Use new</Button>
+                <Button
+                  id="manage-storage-keep-all-current"
+                  variant="outline"
+                  class="h-7 px-2 text-xs"
+                  onclick={() => handleChooseAllNametables('current')}>Keep current</Button
+                >
+                <Button
+                  id="manage-storage-use-all-new"
+                  variant="outline"
+                  class="h-7 px-2 text-xs"
+                  onclick={() => handleChooseAllNametables('new')}>Use new</Button
+                >
               </div>
             {/if}
           </div>
           <Separator />
           <div class="p-2 text-xs">
-            <div class="mb-2 opacity-70">Add: {additions.sets.length} • Conflicts: {conflicts.sets.length}</div>
+            <div class="mb-2 opacity-70">
+              Add: {additions.sets.length} • Conflicts: {conflicts.sets.length}
+            </div>
             <div class="h-40 overflow-y-auto pr-2">
               {#if conflicts.sets.length === 0}
-                <div class="opacity-60">No name-table conflicts.</div>
+                <div class="opacity-60">No nametable conflicts.</div>
               {:else}
                 <ul class="divide-y">
                   {#each conflicts.sets as k (k)}
@@ -309,12 +382,12 @@
                       <div class="truncate font-mono">{k}</div>
                       <RadioGroup.Root class="flex items-center gap-3" bind:value={choices.sets[k]}>
                         <div class="flex items-center gap-1">
-                          <RadioGroup.Item id={'sc-'+k} value="current" />
-                          <Label for={'sc-'+k}>current</Label>
+                          <RadioGroup.Item id={'sc-' + k} value="current" />
+                          <Label for={'sc-' + k}>current</Label>
                         </div>
                         <div class="flex items-center gap-1">
-                          <RadioGroup.Item id={'sn-'+k} value="new" />
-                          <Label for={'sn-'+k}>new</Label>
+                          <RadioGroup.Item id={'sn-' + k} value="new" />
+                          <Label for={'sn-' + k}>new</Label>
                         </div>
                       </RadioGroup.Root>
                     </li>
@@ -329,9 +402,15 @@
 
     <Dialog.Footer class="mt-4">
       <Dialog.Close>
-        <Button id="manage-storage-cancel" variant="outline" class="h-8 px-3 text-xs">Cancel</Button>
+        <Button id="manage-storage-cancel" variant="outline" class="h-8 px-3 text-xs">Cancel</Button
+        >
       </Dialog.Close>
-      <Button id="manage-storage-apply" class="h-8 px-3 text-xs" disabled={!loaded} onclick={handleApply}>
+      <Button
+        id="manage-storage-apply"
+        class="h-8 px-3 text-xs"
+        disabled={!loaded}
+        onclick={handleApply}
+      >
         {mode === 'replace' ? 'Replace' : 'Apply merge'}
       </Button>
     </Dialog.Footer>

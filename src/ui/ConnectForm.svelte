@@ -17,19 +17,19 @@
    */
 
   type Props = {
-    settings: SvimmerWriter<ConnectionSettings>
+    settingsRef: SvimmerWriter<ConnectionSettings>
     status: ConnectStatus
     onsubmit: () => void
     ondisconnect: () => void
   }
 
-  let { settings, status, onsubmit, ondisconnect }: Props = $props()
+  let { settingsRef, status, onsubmit, ondisconnect }: Props = $props()
 
-  const deviceId = settings.focus(key('deviceId'))
-  const baudRate = settings.focus((x) => x.options.baudRate)
-  const dataBits = settings.focus((x) => x.options.dataBits)
-  const stopBits = settings.focus((x) => x.options.stopBits)
-  const parity = settings.focus((x) => x.options.parity)
+  const deviceId = settingsRef.focus(key('deviceId'))
+  const baudRate = settingsRef.focus((x) => x.options.baudRate)
+  const dataBits = settingsRef.focus((x) => x.options.dataBits)
+  const stopBits = settingsRef.focus((x) => x.options.stopBits)
+  const parity = settingsRef.focus((x) => x.options.parity)
 
   const disabled = $derived(status.status === 'connecting' || status.status === 'connected')
 
