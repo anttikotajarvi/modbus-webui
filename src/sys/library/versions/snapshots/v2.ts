@@ -1,8 +1,8 @@
 import SuperJSON, { type SuperJSONResult } from 'superjson'
 import type { LibSerializer, VersionedParser } from '../types'
-import { ok, resErr } from '@/types/generic'
 import { z } from 'zod/v4-mini'
 import type { JSONValue } from 'node_modules/superjson/dist/types'
+import { ok, resErr } from '@/types/generic'
 
 export const V2Parser: VersionedParser<V2Library, 2> = (blob: JSONValue) => {
   let obj

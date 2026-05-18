@@ -172,7 +172,7 @@
         size="icon"
         aria-label={open ? 'Hide frame bytes' : 'Show frame bytes'}
       >
-        <ChevronDown class={`size-4 transition-transform${open ? ' rotate-180' : ''}`} />
+        <ChevronDown class={`size-4${open ? ' rotate-180' : ''}`} />
       </Button>
     </Collapsible.Trigger>
   </div>

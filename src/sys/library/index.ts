@@ -73,7 +73,7 @@ export const saveLibrary =
   (P: Persistence) =>
   (lib: CurrentLibrary): Result<true> => {
     const { val, err } = serializeLibrary(lib)
-    if (err) resErr(err)
+    if (err) return resErr(err)
     P.writeLibrary(STORAGE_KEY, {
       version: STORAGE_VERSION,
       data: val,

@@ -236,9 +236,7 @@
                 aria-controls="connect-advanced-options"
               >
                 <span class="text-xs">Advanced</span>
-                <ChevronDown
-                  class={`size-4 transition-transform ${advancedOpen ? 'rotate-180' : ''}`}
-                />
+                <ChevronDown class={`size-4 ${advancedOpen ? 'rotate-180' : ''}`} />
               </Button>
             {/snippet}
           </Popover.Trigger>

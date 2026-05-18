@@ -61,6 +61,8 @@
       const { val, err } = loadLibrary(P)
       if (!val) {
         console.error(err)
+        const msg = err instanceof Error ? err.message : String(err)
+        alert.error('Failed to load library', `${msg}. Loaded an empty library instead.`)
         return createEmptyLibrary()
       }
       return val.data as LibraryData
@@ -97,7 +99,11 @@
     const flush = () => {
       if (!libStatus.dirty) return
       const { err } = persistLibrary()
-      if (err) console.error('Autosave failed:', err)
+      if (err) {
+        console.error('Autosave failed:', err)
+        const msg = err instanceof Error ? err.message : String(err)
+        alert.error('Autosave failed', msg)
+      }
     }
     const flushWhenHidden = () => {
       if (document.visibilityState === 'hidden') flush()
@@ -124,7 +130,9 @@
   function persistLibrary(): Result<true> {
     const { err } = saveLibrary(P)($lib.value())
     if (err) {
-      console.warn('Failed to save library.')
+      console.warn('Failed to save library.', err)
+      const msg = err instanceof Error ? err.message : String(err)
+      alert.error('Failed to save library', msg)
       return resErr(err)
     }
     libStatus = {
@@ -137,7 +145,8 @@
   const persistenceActions: PersistenceActions = (() => {
     const setLibrary = (data: LibraryData) => {
       lib.set(data)
-      persistLibrary()
+      const { err } = persistLibrary()
+      if (err) return
       alert.success('Library Imported Successfully.')
     }
     return {

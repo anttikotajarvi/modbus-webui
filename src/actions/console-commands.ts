@@ -2,6 +2,7 @@ import { createEmptyLibrary } from '@/sys/library/defaults'
 import type { PersistenceActions } from './persistence'
 import type { SvimmerWriter } from 'svimmer-store'
 import type { LibraryData } from '@/sys/library/types'
+import type { Result } from '@/types/generic'
 import { useAlert } from '@/ui/alert/context'
 import { openFiles } from '@/sys/generic/open-file'
 const alert = useAlert()
@@ -9,12 +10,13 @@ const alert = useAlert()
 export function primeConsoleCommands(
   persistenceActions: PersistenceActions,
   lib: SvimmerWriter<LibraryData>,
-  persistLibrary: () => void,
+  persistLibrary: () => Result<true>,
 ) {
   const consoleCommands = {
     resetStorage: () => {
       lib.set(createEmptyLibrary())
-      void persistLibrary()
+      const { err } = persistLibrary()
+      if (err) return
       alert.success('Storage Reset to Default State.')
     },
 

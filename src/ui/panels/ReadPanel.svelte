@@ -23,6 +23,7 @@
   import type { ModbusClientProcedures } from '@/sys/modbus/gateway'
   import type { SvimmerReader } from 'svimmer-store'
   import { HEX } from '@/sys/generic/formatting'
+  import { useAlert } from '@/ui/alert/context'
   type Props = {
     id: string
     type: ReadFunction
@@ -33,6 +34,7 @@
   }
 
   let { id, type, name, description, namesRef, readFromClient }: Props = $props()
+  const alert = useAlert()
   const emptyNames = new Map<number, string>()
   let names = $derived($namesRef.value() ?? emptyNames)
 
@@ -83,7 +85,9 @@
       })
       .catch((error) => {
         console.error('Error reading from client:', $state.snapshot(settings.queryTemplate), error)
-        errorMsg = error.message
+        const msg = error instanceof Error ? error.message : String(error)
+        errorMsg = msg
+        alert.error('Read failed', msg)
       })
   }
 
@@ -100,7 +104,7 @@
   let flash = $state(false)
 </script>
 
-<Collapsible.Root class="w-full">
+<Collapsible.Root bind:open class="w-full">
   <Card.Root class="w-full">
     <Card.Header class="flex items-center justify-between gap-3">
       <div class="min-w-0">
@@ -182,7 +186,7 @@
               size="icon"
               aria-label={open ? 'Minimize' : 'Maximize'}
             >
-              <ChevronUp class={`size-4 transition-transform${!open ? ' rotate-180' : ''}`} />
+              <ChevronUp class={`size-4${!open ? ' rotate-180' : ''}`} />
             </Button>
           </Collapsible.Trigger>
         </div>

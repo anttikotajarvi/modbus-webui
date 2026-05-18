@@ -74,8 +74,10 @@
       })
       .catch((err: any) => {
         console.error('Write failed:', err)
-        status.msg = `Write failed: ${err.message}`
+        const msg = err instanceof Error ? err.message : String(err)
+        status.msg = `Write failed: ${msg}`
         status.error = true
+        alert.error('Write failed', msg)
       })
   }
 
@@ -237,7 +239,7 @@
 
           <Collapsible.Trigger>
             <Button variant="ghost" size="icon" aria-label={open ? 'Minimize' : 'Maximize'}>
-              <ChevronUp class={`size-4 transition-transform${!open ? ' rotate-180' : ''}`} />
+              <ChevronUp class={`size-4${!open ? ' rotate-180' : ''}`} />
             </Button>
           </Collapsible.Trigger>
         </div>
