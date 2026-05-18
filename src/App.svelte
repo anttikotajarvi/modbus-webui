@@ -61,8 +61,7 @@
       const { val, err } = loadLibrary(P)
       if (!val) {
         console.error(err)
-        const msg = err instanceof Error ? err.message : String(err)
-        alert.error('Failed to load library', `${msg}. Loaded an empty library instead.`)
+        alert.info('No existing library found', `Initialized an empty save file.`)
         return createEmptyLibrary()
       }
       return val.data as LibraryData
