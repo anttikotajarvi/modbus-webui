@@ -11,102 +11,6 @@
   import TopMenu from '@/ui/TopMenu.svelte'
 
   // ------------------------
-  // Console commands
-  // ------------------------
-
-  /*
-  const consoleCommands = {
-    resetStorage: () => {
-      lib.set(createEmptyLibrary())
-      void persistLibrary()
-      alert.success('Storage reset to default state.')
-    },
-
-    printLibraryToConsole: () => {
-      console.log('Current library state:', $state.snapshot(lib))
-      alert.info('Library state printed to console.')
-    },
-
-    exportLibrary: () => {
-      // Data straight from localStorage
-      const data = JSON.stringify(serializeLibrary(lib.value()))
-      const blob = new Blob([data], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `modbus-webui-library-${STORAGE_VERSION}.json`
-      a.click()
-      // revoke on next tick to avoid aborting downloads in some browsers
-      setTimeout(() => URL.revokeObjectURL(url), 0)
-      alert.success('Library exported successfully.')
-    },
-
-    importLibrary: (json: string) => {
-      try {
-        console.log('Importing library JSON:', json)
-        const { val: parsed, err } = parseEnvelope(json)
-        if (err) throw err
-
-        const { val: norm, err: err2 } = normalizeLibrary(parsed)
-        if (err2) throw err2
-
-        lib.set(norm.data)
-        void persistLibrary()
-
-        alert.success('Library imported successfully.')
-      } catch (err) {
-        console.error('Import failed:', err)
-        const msg = err instanceof Error ? err.message : String(err)
-        alert.error(`Import failed: ${msg}`)
-      }
-    },
-
-    importLibraryFromFile: async () => {
-      try {
-        if ('showOpenFilePicker' in window) {
-          // @ts-expect-error: FS Access API types not always present
-          const [handle] = await window.showOpenFilePicker({
-            types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
-            multiple: false,
-          })
-          const file = await handle.getFile()
-          const text = await file.text()
-          consoleCommands.importLibrary(text)
-          return
-        }
-
-        // Fallback: ad-hoc <input type="file">
-        const input = document.createElement('input')
-        input.type = 'file'
-        input.accept = 'application/json,.json'
-        input.style.position = 'fixed'
-        input.style.left = '-9999px'
-        document.body.appendChild(input)
-        input.onchange = async () => {
-          try {
-            const file = input.files?.[0]
-            if (!file) return
-            const text = await file.text()
-            consoleCommands.importLibrary(text)
-          } finally {
-            input.remove()
-          }
-        }
-        input.click()
-      } catch (err) {
-        if ((err as any)?.name === 'AbortError') return // user canceled
-        console.error('Import picker failed:', err)
-        const msg = err instanceof Error ? err.message : String(err)
-        alert.error(`Import failed: ${msg}`)
-      }
-    },
-  }
-  // expose to window early so it works even if UI fails later
-  ;(globalThis as any).MB_APP ??= {}
-  Object.assign((globalThis as any).MB_APP, consoleCommands)
-  */
-
-  // ------------------------
   // Modbus client setup
   // ------------------------
   const client = makeRef<ModbusRTU | null>(null)
@@ -250,6 +154,9 @@
 
   const clientProcedures = createModbusClientProcedures({ clientRef: client })
 
+  /* Prime console commands */
+  primeConsoleCommands(persistenceActions, lib, persistLibrary);
+
   /* Handlers */
   function handleOnConnect() {
     performConnect(client, conn, connectionSettingsRef)
@@ -289,6 +196,7 @@
   import NametableModal from '@/ui/modals/NametableModal.svelte'
   import { exportFile } from './util/dom'
   import { exportFilename } from './sys/storage'
+  import { primeConsoleCommands } from './actions/console-commands'
 
   const alert = useAlert()
 </script>
@@ -356,7 +264,11 @@
       <!-- C2: WRITES (right rail only when the parent hits 1480px; stacked otherwise) -->
       <aside class="min-w-0 w-full space-y-4 self-start min-[1480px]:sticky min-[1480px]:top-4">
         <div class="mx-auto w-full max-w-[900px] grid gap-4">
-          <QuickWritePanel {profileRef} nametable={nametableRef} writeToClient={clientProcedures.writeToClient} />
+          <QuickWritePanel
+            {profileRef}
+            nametable={nametableRef}
+            writeToClient={clientProcedures.writeToClient}
+          />
           <WritePanel
             id="wp-hr"
             description="FC06 / FC16"
