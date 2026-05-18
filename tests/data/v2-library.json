@@ -1,7 +1,8 @@
 {
   "version": 2,
   "data": {
-    "json": {
+    "data": {
+      "json": {
       "nametables": {
         "CO2CS1_10_25": {
           "iregs": [
@@ -161,7 +162,7 @@
       },
       "activeProfileTag": "ANTTI"
     },
-    "meta": {
+      "meta": {
       "values": {
         "nametables.CO2CS1_10_25.iregs": ["map"],
         "nametables.CO2CS1_10_25.hregs": ["map"],
@@ -169,6 +170,7 @@
         "nametables.CO2CS1_10_25.dinputs": ["map"]
       },
       "v": 1
+    }
     }
   }
 }

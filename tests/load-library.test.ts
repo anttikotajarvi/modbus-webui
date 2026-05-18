@@ -8,7 +8,6 @@ import { createPersistence, LEGACY_KEY } from '../src/sys/generic/persistence'
 import { loadLibrary, STORAGE_KEY } from '../src/sys/library'
 import { STORAGE_VERSION } from '../src/sys/library/versions/current'
 import { getVersion, versionKeys, versions } from '../src/sys/library/versions'
-import { Versioned } from '../src/sys/generic/versioning'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const dataDir = resolve(__dirname, 'data')
@@ -18,10 +17,18 @@ function fixtureNameForVersion(version: number): string {
 }
 
 const V1_STORAGE_FILE = fixtureNameForVersion(1)
-const CURRENT_STORAGE_FILE = fixtureNameForVersion(STORAGE_VERSION);
+const CURRENT_STORAGE_FILE = fixtureNameForVersion(STORAGE_VERSION)
 
 function readFixture(name: string): string {
   return readFileSync(resolve(dataDir, name), 'utf8')
+}
+
+function serializedPayloadForVersion(version: number, data: unknown): unknown {
+  if (version === 2 && data && typeof data === 'object' && 'data' in data) {
+    return data.data
+  }
+
+  return data
 }
 
 function makeStorage(entries: Record<string, string | null>) {
@@ -154,17 +161,12 @@ describe('storage version parser/serializer coherence', () => {
       const raw = readFixture(fixtureNameForVersion(version))
 
       const { storage } = makeStorage(
-        version === 1
-          ? { [LEGACY_KEY]: raw }
-          : { [STORAGE_KEY]: raw }
+        version === 1 ? { [LEGACY_KEY]: raw } : { [STORAGE_KEY]: raw },
       )
 
       const P = createPersistence(storage)
 
-      const fetched =
-        version === 1
-          ? P.fetchLegacyLibrary()
-          : P.fetchLibrary(STORAGE_KEY)
+      const fetched = version === 1 ? P.fetchLegacyLibrary() : P.fetchLibrary(STORAGE_KEY)
 
       expect(fetched.err).toBeNull()
       expect(fetched.val).not.toBeNull()
@@ -186,9 +188,11 @@ describe('storage version parser/serializer coherence', () => {
       expect(serializeErr).toBeNull()
       if (serializeErr) return
 
-      expect(serialized).toEqual(fetched.val.data)
+      const expectedSerialized = serializedPayloadForVersion(version, fetched.val.data)
+      expect(serialized).toEqual(expectedSerialized)
 
-      const reparsed = def.parse(serialized)
+      const reparseBlob = version === 2 ? { data: serialized } : serialized
+      const reparsed = def.parse(reparseBlob as never)
       expect(reparsed.err).toBeNull()
       expect(reparsed.val).toEqual(parsed)
     })
