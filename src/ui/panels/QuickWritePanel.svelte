@@ -2,7 +2,7 @@
   import * as Card from '$lib/components/ui/card'
   import * as Table from '$lib/components/ui/table'
   import { Button } from '$lib/components/ui/button'
-  import { Play, Trash2 } from 'lucide-svelte'
+  import { Play, Trash2 } from '@lucide/svelte'
 
   import { regPrefixes, type WriteQuery, type WriteResponse } from '@/sys/modbus'
   import { useAlert } from '@/ui/alert/context'

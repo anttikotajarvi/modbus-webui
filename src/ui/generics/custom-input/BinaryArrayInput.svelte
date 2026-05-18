@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Brackets } from 'lucide-svelte'
+  import { Brackets } from '@lucide/svelte'
   import * as Tooltip from '$lib/components/ui/tooltip'
   import ArrayInputTooltip from '@/ui/tooltips/ArrayInputTooltip.svelte'
   import { Badge } from '$lib/components/ui/badge'

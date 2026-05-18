@@ -9,7 +9,7 @@
   import { Separator } from '$lib/components/ui/separator'
   import { Badge } from '$lib/components/ui/badge'
   import { Popover } from 'bits-ui'
-  import { ChevronDown } from 'lucide-svelte'
+  import { ChevronDown } from '@lucide/svelte'
   import type { SvimmerWriter } from 'svimmer-store'
   import { key } from 'svimmer-store/helpers/selectors'
   import { setNumber } from '../util/set-value'

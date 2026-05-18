@@ -16,7 +16,7 @@
   import { useAlert } from '../alert/context'
   import { sv } from '@/util/sv.svelte'
   import { createEmptyLibrary } from '@/sys/library/defaults'
-  import { FileDown, FileUp } from 'lucide-svelte'
+  import { FileDown, FileUp } from '@lucide/svelte'
   const alert = useAlert()
   let {
     open = $bindable<boolean>(false),

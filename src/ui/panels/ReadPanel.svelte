@@ -13,7 +13,7 @@
   import { Button } from '$lib/components/ui/button'
   import { Label } from '$lib/components/ui/label'
   import { Input } from '$lib/components/ui/input'
-  import { ChevronUp, RefreshCcw } from 'lucide-svelte'
+  import { ChevronUp, RefreshCcw } from '@lucide/svelte'
   import { Checkbox } from '$lib/components/ui/checkbox'
   import HexInput from '@/ui/generics/custom-input/HexInput.svelte'
   import BitTable from '@/ui/generics/BitTable.svelte'

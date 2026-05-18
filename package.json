@@ -46,9 +46,7 @@
     "clsx": "^2.1.1",
     "eslint": "^9.33.0",
     "eslint-plugin-svelte": "^3.11.0",
-    "formsnap": "^2.0.1",
     "globals": "^16.3.0",
-    "lucide-svelte": "^0.539.0",
     "modbus-webserial": "^0.11.1",
     "prettier": "^3.6.2",
     "prettier-plugin-svelte": "^3.4.0",
@@ -68,6 +66,6 @@
   "dependencies": {
     "immer": "^11.1.4",
     "superjson": "^2.2.6",
-    "svimmer-store": "^0.0.3"
+    "svimmer-store": "^0.0.4"
   }
 }

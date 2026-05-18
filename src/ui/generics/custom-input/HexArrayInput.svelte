@@ -3,7 +3,7 @@
   import { Badge } from '$lib/components/ui/badge'
   import * as Tooltip from '$lib/components/ui/tooltip'
   import ArrayInputTooltip from '@/ui/tooltips/ArrayInputTooltip.svelte'
-  import { Brackets } from 'lucide-svelte'
+  import { Brackets } from '@lucide/svelte'
   type DisplayMode = 'auto' | 'dec' | 'hex'
 
   let {

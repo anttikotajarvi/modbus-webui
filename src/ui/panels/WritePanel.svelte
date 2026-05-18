@@ -4,7 +4,7 @@
   import { Button } from '$lib/components/ui/button'
   import { Label } from '$lib/components/ui/label'
   import { Separator } from '$lib/components/ui/separator'
-  import { ChevronUp, OctagonX } from 'lucide-svelte'
+  import { ChevronUp, OctagonX } from '@lucide/svelte'
   import HexArrayInput from '@/ui/generics/custom-input/HexArrayInput.svelte'
   import BinaryArrayInput from '@/ui/generics/custom-input/BinaryArrayInput.svelte'
   import { useAlert } from '@/ui/alert/context'

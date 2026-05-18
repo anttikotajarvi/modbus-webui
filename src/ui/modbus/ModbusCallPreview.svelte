@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Collapsible from '$lib/components/ui/collapsible'
   import { Button } from '$lib/components/ui/button'
-  import { ChevronDown } from 'lucide-svelte'
+  import { ChevronDown } from '@lucide/svelte'
   import { regPrefixes, type WriteFunction } from '@/sys/modbus'
   import { HEX } from '@/sys/generic/formatting'
   import {
