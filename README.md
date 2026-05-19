@@ -1,4 +1,4 @@
-# modbus-webui (beta)
+# modbus-webui
 
 Single-file Modbus workbench — profiles, name tables, shortcuts.
 
@@ -7,16 +7,22 @@ Single-file Modbus workbench — profiles, name tables, shortcuts.
 
 ## What it is
 
-A browser-based UI for Modbus devices. Runs fully client-side via the [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API) and [modbus-webserial](https://www.npmjs.com/package/modbus-webserial). No install required to use the app; optional CLI for quick start. \
-Built with [Svelte](https://svelte.dev) and [shadcn](https://www.shadcn-svelte.com/). 
+A browser-based UI for Modbus devices. Runs fully client-side via the [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API) and [modbus-webserial](https://www.npmjs.com/package/modbus-webserial). No backend required.
 
 ---
 
 ## Quick start
 
-### Directly from Github Pages
-### --> [modbus-webUI](https://modbuswebui.dev/) <--
-### or with npx
+### Use hosted app (GitHub Pages)
+##### [modbuswebui.dev](https://modbuswebui.dev/)
+
+### Offline/local use (no npm or npx)
+
+1. Download the latest `modbus-webui.html` from the [GitHub releases](https://github.com/anttikotajarvi/modbus-webui/releases).
+2. Open `modbus-webui.html` directly in a supported Chromium-based desktop browser.
+3. Optional: host the same file on your internal/static server.
+
+### Optional CLI convenience
 
 ```bash
 # serve the packaged HTML immediately
@@ -31,7 +37,15 @@ npx modbus-webui serve
 #   serve [filename] [--port=...]
 ```
 
-You can also download the single `modbus-webui.html` file and open it directly in a supported browser.
+---
+
+## Security & privacy
+
+* **No Google Analytics or tracking scripts** are injected into the app.
+* **No backend dependency**: Modbus communication is from your browser to your selected serial port.
+* **Offline-capable**: the same single HTML file can be used in fully isolated local environments.
+* **One-click download**: use the in-app footer link to download `modbus-webui.html` for local reuse.
+* **Self-hosting friendly**: you can host a vetted static artifact in your own network.
 
 ---
 
@@ -71,7 +85,7 @@ You can also download the single `modbus-webui.html` file and open it directly i
 ### Storage & versioning
 
 * All data is kept as a single **library** and saved to `localStorage` (auto or manual save).
-* The stored data is versioned to allow future migrations.
+* The stored data is versioned with a strong migration layer, so old library storage files are intended to stay migration-proof across app updates.
 
 ---
 

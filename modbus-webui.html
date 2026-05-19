@@ -17,7 +17,7 @@
             <h1 class="text-xl text-foreground tracking-wide">
               modbus-webui <span class="text-muted-foreground">v%APP_VERSION%</span>
             </h1>
-            <h2>Single-file Modbus workbench—profiles, name tables, shortcuts.</h2>
+            <h2>Single-file Modbus workbench—profiles, name tables, shortcuts, fully offline-capable.</h2>
             <section aria-labelledby="about">
               <h3 id="about" class="mb-2 font-semibold text-foreground">About</h3>
               <p class="mb-2">
@@ -38,6 +38,25 @@
                   >modbus-webserial</a
                 >.
               </p>
+              <p class="mb-2">
+                <strong>Privacy:</strong> No analytics or tracking scripts are loaded.
+              </p>
+
+              <p class="mb-2">
+                <strong>Offline:</strong> Download this single HTML file and run it locally or inside air-gapped networks.
+              </p>
+
+
+
+              <p class="mb-2">
+                <a
+                  class="underline break-words"
+                  href="./modbus-webui.html"
+                  download="modbus-webui.html"
+                  >Download modbus-webui.html for offline use</a
+                >
+                <span class="opacity-70">(or use GitHub Releases if your browser blocks direct download)</span>
+              </p>
               <p>
                 Source:&nbsp;
                 <a
@@ -48,17 +67,16 @@
                   >GitHub: modbus-webui</a
                 >
               </p>
-            </section>
-            <section aria-labelledby="legacy-export">
-              <h3 id="about" class="mb-2 font-semibold text-foreground">Lost your library from before 26.9.2025?</h3>
-              <p class="mb-2">
-                The domain changed as of 26.9.2025, so if you had a library saved on the old domain it will not be directly available from this page. You can import it by:
-                <ol class="list-decimal list-inside space-y-1">
-                <li>Open <strong>Import/Export</strong></li>
-                <li>Click <strong>Import localStorage from old domain</strong></li>
-                <li>Follow popup and click <strong>Send to new site</strong></li>
-                <br />
-                We apologize for the inconvenience. 
+
+              <p class="mt-3">
+                Custom implementations or feature requests:&nbsp;
+                <a
+                  class="underline break-words"
+                  href="mailto:antti.kotajarvi@hotmail.com?subject=modbus-webui%20custom%20implementation"
+                >
+                  antti.kotajarvi@hotmail.com
+                </a>
+              </p>
             </section>
           </aside>
 
@@ -85,12 +103,12 @@
                   <strong>Profiles</strong> keep your device-specific setup.
                 </li>
               </ol>
-              <p class="mt-2 opacity-70">We’ll expand this section with examples and tips.</p>
+              <p class="mt-2 opacity-70">Tip: You can bookmark this page or save the HTML file for local/offline reuse.</p>
             </section>
 
-            <!-- Name Tables -->
+            <!-- Nametables -->
             <section aria-labelledby="nametables">
-              <h3 id="nametables" class="mb-2 font-semibold text-foreground">Name Tables</h3>
+              <h3 id="nametables" class="mb-2 font-semibold text-foreground">Nametables</h3>
               <ul class="list-disc list-inside space-y-1">
                 <li>
                   <strong>Shared library:</strong> Name tables are global; any profile can choose
@@ -147,12 +165,11 @@
                   automatically or when you choose to save.
                 </li>
                 <li>
-                  <strong>Versioned:</strong> Stored data has a version number so future updates can
-                  migrate it safely.
+                  <strong>Migration-proof storage:</strong> Library data uses strong versioned migrations so older storage files remain migration-proof across updates.
                 </li>
                 <li>
-                  <strong>Import/Export:</strong> Planned; advanced users can manage the stored
-                  library manually for now.
+                  <strong>Import/Export:</strong> You can manage your storage by importing/exporting your library
+                  as a JSON file.
                 </li>
               </ul>
             </section>

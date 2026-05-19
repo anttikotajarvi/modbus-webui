@@ -11,7 +11,7 @@
     unregisterAlertShow,
   } from "./context";
   import { fade } from "svelte/transition";
-  import { X, Info, CircleCheck, TriangleAlert } from "lucide-svelte";
+  import { X, Info, CircleCheck, TriangleAlert } from "@lucide/svelte";
 
   type Item = {
     id: number;
