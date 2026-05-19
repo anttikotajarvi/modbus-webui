@@ -184,10 +184,10 @@
   primeConsoleCommands(persistenceActions, lib, persistLibrary)
 
   /* Handlers */
-  function handleOnConnect() {
+  function handleConnect() {
     performConnect(client, conn, connectionSettingsRef)
   }
-  function handleOnDisconnect() {
+  function handleDisconnect() {
     performDisconnect(client, conn)
   }
 </script>
@@ -201,8 +201,8 @@
   <ConnectForm
     settingsRef={connectionSettingsRef}
     status={conn}
-    onsubmit={handleOnConnect}
-    ondisconnect={handleOnDisconnect}
+    onConnect={handleConnect}
+    onDisconnect={handleDisconnect}
   />
   <!-- App shell: make page fill the viewport -->
   <!-- App.svelte layout snippet -->

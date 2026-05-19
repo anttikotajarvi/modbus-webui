@@ -14,14 +14,14 @@
   let {
     name,
     initialData,
-    onsave,
-    ondelete,
+    onSave,
+    onDelete,
     dirty = $bindable<boolean>(false),
   }: {
     name: string
     initialData: Nametable
-    onsave: (nt: Nametable) => void
-    ondelete: () => void
+    onSave: (nt: Nametable) => void
+    onDelete: () => void
     dirty: boolean
   } = $props()
 
@@ -82,7 +82,7 @@
     }
   }
   /* JSON -> working (manual paste/edit) */
-  function onJsonInput(e: Event) {
+  function handleJsonInput(e: Event) {
     const el = e.target as HTMLTextAreaElement
     jsonText = el.value
     // Parse json with debounce to avoid too many updates
@@ -103,7 +103,7 @@
     applyFromJson()
     if (parseError) return
     dirty = false
-    onsave(sv(working))
+    onSave(sv(working))
   }
 
   /* Tabs state */
@@ -163,7 +163,7 @@
             bind:value={jsonText}
             onfocus={() => (jsonActive = true)}
             onblur={() => ((jsonActive = false), applyFromJson())}
-            oninput={onJsonInput}
+            oninput={handleJsonInput}
             spellcheck="false"
             autocapitalize="off"
             autocomplete="off"
@@ -185,7 +185,7 @@
       {dirty ? 'Unsaved changes' : ''}
     </span>
     <div class="ml-auto">
-      <Button variant="destructive" onclick={ondelete}>Delete Set…</Button>
+      <Button variant="destructive" onclick={onDelete}>Delete Set…</Button>
     </div>
   </Card.Footer>
 </Card.Root>

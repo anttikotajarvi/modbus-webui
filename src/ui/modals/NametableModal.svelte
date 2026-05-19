@@ -47,13 +47,13 @@
 
   let currentDirty = $state(false)
 
-  function onSelect(nextId: string) {
+  function handleSelect(nextId: string) {
     if (currentDirty) {
       alert.info(`Discarded unsaved changes to ${$selectedTag ?? 'current set'}`)
     }
     selectedTag.set(nextId as NametableTag)
   }
-  function onCreate() {
+  function handleCreate() {
     if (!newIdValid().ok || !newId) return
     const id = newId as NametableTag
     nametablesRef.transact(setKey(id, createEmptyNametable()))
@@ -62,14 +62,14 @@
     newOpen = false
     newId = null
   }
-  function onDelete() {
+  function handleDelete() {
     const id = $selectedTag
 
     const res = nametablesRef.transact(deleteKey(id))
     if (res) alert.info(`Deleted nametable "${id}" successfully.`)
     selectedTag.set(tags[0] ?? '') // pick next or clear
   }
-  function onSave(data: Nametable) {
+  function handleSave(data: Nametable) {
     const id = $selectedTag
     nametablesRef.transact(setKey(id, sv(data)))
     alert.success('Nametable Saved!', 'Saved ' + id)
@@ -91,7 +91,7 @@
             disabled={tags.length === 0}
             type="single"
             value={$selectedTag ?? ''}
-            onValueChange={onSelect}
+            onValueChange={handleSelect}
           >
             <Select.Trigger class="w-full h-9">
               {#if $selectedTag}{$selectedTag}{:else}<span class="text-muted-foreground"
@@ -127,8 +127,8 @@
             name={$selectedTag}
             bind:dirty={currentDirty}
             initialData={selectedNtRef.value()}
-            onsave={onSave}
-            ondelete={onDelete}
+            onSave={handleSave}
+            onDelete={handleDelete}
           />
         {/key}
       </div>
@@ -164,7 +164,7 @@
           newOpen = false
         }}>Cancel</Button
       >
-      <Button disabled={!newIdValid().ok} onclick={onCreate}>Create</Button>
+      <Button disabled={!newIdValid().ok} onclick={handleCreate}>Create</Button>
     </Dialog.Footer>
   </Dialog.Content>
 </Dialog.Root>

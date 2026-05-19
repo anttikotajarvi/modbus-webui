@@ -24,11 +24,11 @@
   type Props = {
     settingsRef: SvimmerWriter<ConnectionSettings>
     status: ConnectStatus
-    onsubmit: () => void
-    ondisconnect: () => void
+    onConnect: () => void
+    onDisconnect: () => void
   }
 
-  let { settingsRef, status, onsubmit, ondisconnect }: Props = $props()
+  let { settingsRef, status, onConnect, onDisconnect }: Props = $props()
 
   const deviceId = settingsRef.focus(key('deviceId'))
   const baudRate = settingsRef.focus((x) => x.options.baudRate)
@@ -80,7 +80,7 @@
 
   function handleSubmit(event: SubmitEvent) {
     event.preventDefault()
-    void onsubmit()
+    void onConnect()
   }
 
   function setCrcMode(value: CrcMode) {
@@ -359,7 +359,7 @@
           type="button"
           variant="outline"
           class="h-9"
-          onclick={ondisconnect}
+          onclick={onDisconnect}
         >
           Disconnect
         </Button>
