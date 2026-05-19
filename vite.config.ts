@@ -80,8 +80,6 @@ function createSeoHeadInjector(): Plugin {
     name: 'seo-head-injector',
     transformIndexHtml(html): IndexHtmlTransformResult {
       const SITE_URL = process.env.VITE_SITE_URL || siteURL
-      const GA_ID = process.env.VITE_GA_ID || 'G-0HFN4G088N'
-
       const withSlash = SITE_URL.replace(/\/?$/, '/')
       const asset = (p: string) => `${withSlash}${p}`.replace(/([^:]\/)\/+/g, '$1')
 
@@ -146,21 +144,6 @@ function createSeoHeadInjector(): Plugin {
             url: SITE_URL,
             keywords: KEYWORDS,
           }),
-        },
-
-        // Google Analytics
-        {
-          tag: 'script',
-          attrs: { async: true, src: `https://www.googletagmanager.com/gtag/js?id=${GA_ID}` },
-        },
-        {
-          tag: 'script',
-          children: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_ID}');
-          `.trim(),
         },
       ]
 

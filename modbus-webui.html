@@ -17,7 +17,7 @@
             <h1 class="text-xl text-foreground tracking-wide">
               modbus-webui <span class="text-muted-foreground">v%APP_VERSION%</span>
             </h1>
-            <h2>Single-file Modbus workbench—profiles, name tables, shortcuts.</h2>
+            <h2>Single-file Modbus workbench—profiles, name tables, shortcuts, fully offline-capable.</h2>
             <section aria-labelledby="about">
               <h3 id="about" class="mb-2 font-semibold text-foreground">About</h3>
               <p class="mb-2">
@@ -37,6 +37,25 @@
                   rel="noopener noreferrer"
                   >modbus-webserial</a
                 >.
+              </p>
+              <p class="mb-2">
+                <strong>Privacy:</strong> No analytics or tracking scripts are loaded.
+              </p>
+
+              <p class="mb-2">
+                <strong>Offline:</strong> Download this single HTML file and run it locally or inside air-gapped networks.
+              </p>
+
+
+
+              <p class="mb-2">
+                <a
+                  class="underline break-words"
+                  href="./modbus-webui.html"
+                  download="modbus-webui.html"
+                  >Download modbus-webui.html for offline use</a
+                >
+                <span class="opacity-70">(or use GitHub Releases if your browser blocks direct download)</span>
               </p>
               <p>
                 Source:&nbsp;
@@ -84,7 +103,7 @@
                   <strong>Profiles</strong> keep your device-specific setup.
                 </li>
               </ol>
-              <p class="mt-2 opacity-70">We’ll expand this section with examples and tips.</p>
+              <p class="mt-2 opacity-70">Tip: You can bookmark this page or save the HTML file for local/offline reuse.</p>
             </section>
 
             <!-- Nametables -->
@@ -146,8 +165,7 @@
                   automatically or when you choose to save.
                 </li>
                 <li>
-                  <strong>Versioned:</strong> Stored data has a version number so future updates can
-                  migrate it safely.
+                  <strong>Migration-proof storage:</strong> Library data uses strong versioned migrations so older storage files remain migration-proof across updates.
                 </li>
                 <li>
                   <strong>Import/Export:</strong> You can manage your storage by importing/exporting your library
