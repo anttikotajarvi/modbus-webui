@@ -162,7 +162,7 @@
   <div class="flex flex-wrap items-start justify-between gap-3">
     <div>
       <p class="text-sm font-medium text-foreground">Modbus RTU Request Preview</p>
-      <code class="rounded-md bg-background px-2 py-1 text-xs text-foreground">{callSignature}</code
+      <code class="text-xs text-muted-foreground">{callSignature}</code
       >
     </div>
     <Collapsible.Trigger>

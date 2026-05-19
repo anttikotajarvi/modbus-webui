@@ -104,10 +104,10 @@
 
     <!-- Name tables menu -->
     <Menubar.Menu>
-      <Menubar.Trigger>Name Tables</Menubar.Trigger>
+      <Menubar.Trigger>Nametables</Menubar.Trigger>
       <Menubar.Content>
         {#if ntTags.length === 0}
-          <Menubar.Item disabled>No Name Tables</Menubar.Item>
+          <Menubar.Item disabled>No Nametables</Menubar.Item>
         {:else}
           {#each ntTags as s (s)}
             <Menubar.Item onclick={() => selectedNtTagRef.set(s)}>

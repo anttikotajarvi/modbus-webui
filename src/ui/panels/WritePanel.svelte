@@ -335,9 +335,7 @@
             {/if}
           </Table.Body>
         </Table.Root>
-        <div class="w-full rounded-lg border bg-muted/30 p-3">
-          <ModbusCallPreview {type} {address} values={rightValues} {deviceId} />
-        </div>
+        <ModbusCallPreview {type} {address} values={rightValues} {deviceId} />
 
         <div class="w-full pt-4">
           <Separator orientation="horizontal" />
