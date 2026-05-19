@@ -114,7 +114,7 @@
             newOpen = true
           }}
         >
-          New set…
+          Create new
         </Button>
       </div>
     </Dialog.Header>

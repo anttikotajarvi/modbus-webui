@@ -1,15 +1,4 @@
 Bugs:
-- No toast on write registers
-- In "Write preview":
-  > write_multiple_registers 
-  > 0x15(HR22)
-  > 43690(0xAAAA)
-  > 1487(0x5CF)
-  > Preview of write operation
-  > Reg.	Address	Name	Decimal	Bool	Binary
-  > HR22	0x0015	SPECIAL_CMD_ARG	43690	0xAAAA	0b1010_1010_1010_1010
-  > HR24	0x0017	n/a	1487	0x05CF	0b0000_0101_1100_1111
-    ^ should be HR23
 
 Tweaks:
 - Add file browser symbol to "Pick JSON" button
