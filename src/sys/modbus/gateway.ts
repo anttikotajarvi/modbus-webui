@@ -91,7 +91,7 @@ async function runReadQuery(
 async function runWriteQuery(
   client: ModbusRTU,
   query: WriteQuery,
-): Promise<unknown> {
+) {
   switch (query.type) {
     case "write_registers":
       return await writeOneOrMoreRegisters(client, query.address, query.values as number[]);
@@ -108,7 +108,7 @@ function writeOneOrMoreRegisters(
   client: ModbusRTU,
   address: number,
   values: number[],
-): Promise<unknown> {
+) {
   if (values.length === 1) {
     return client.writeRegister(address, values[0]);
   }
@@ -120,7 +120,7 @@ function writeOneOrMoreCoils(
   client: ModbusRTU,
   address: number,
   values: boolean[],
-): Promise<unknown> {
+) {
   if (values.length === 1) {
     return client.writeCoil(address, values[0]);
   }

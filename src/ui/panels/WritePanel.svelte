@@ -56,7 +56,6 @@
   const rightValues = $derived(type === 'write_coils' ? bitValues : wordValues)
   let valuesFocused = $state(false)
 
-  let status = $state({ msg: '', error: false })
   function writeData() {
     if (!isQueryValid()) {
       alert.error('Invalid query parameters.')
@@ -69,28 +68,20 @@
     })
       .then((res: WriteResponse) => {
         console.log('Write successful:', res)
-        status.msg = `Succesfully wrote ${res.quantity} values to address ${HEX(res.address, 4)} (${regPrefixes[type]}${res.address + 1})`
-        status.error = false
+        alert.success(
+          'Write successful',
+          `Wrote ${res.quantity} values to address ${HEX(res.address, 4)} (${regPrefixes[type]}${res.address + 1}).`,
+        )
       })
       .catch((err: any) => {
         console.error('Write failed:', err)
         const msg = err instanceof Error ? err.message : String(err)
-        status.msg = `Write failed: ${msg}`
-        status.error = true
         alert.error('Write failed', msg)
       })
   }
 
   let open = $state(true)
   const regPrefix = (n: number) => regPrefixes[type] + `${n + 1}`
-
-  let showToastMessage = $state(false)
-  let toast = () => {
-    showToastMessage = true
-    setTimeout(() => {
-      showToastMessage = false
-    }, 3000) // Hide after 3 seconds
-  }
 
   function handleValuesFocusIn() {
     valuesFocused = true
@@ -134,7 +125,6 @@
       address,
       values: sv(rightValues),
     })
-    toast()
     shortcutName = '' // Reset after saving
   }
 </script>
@@ -251,42 +241,34 @@
           ? 'border-primary ring-2 ring-primary/30'
           : ''}"
       >
-        {#if showToastMessage}
-          {#if status.error}
-            <span class="text-red-500">{status.msg}</span>
-          {:else}
-            <span class="text-green-500">{status.msg}</span>
+        <div class="mb-2 flex flex-wrap items-center gap-2">
+          <span class="font-medium text-foreground">Values</span>
+          {#if rightValues.length > 0}
+            <Button variant="link" class="m-0 ml-auto h-[1em]" size="sm" onclick={handleClear}>
+              Clear</Button
+            >
           {/if}
-        {:else}
-          <div class="mb-2 flex flex-wrap items-center gap-2">
-            <span class="font-medium text-foreground">Values</span>
-            {#if rightValues.length > 0}
-              <Button variant="link" class="m-0 ml-auto h-[1em]" size="sm" onclick={handleClear}>
-                Clear</Button
-              >
-            {/if}
-          </div>
-          <div class="flex flex-wrap gap-2">
-            {#if rightValues.length === 0}
-              <span
-                class="inline-flex items-center rounded-md border border-dashed bg-background px-2 py-1 text-xs text-muted-foreground"
-              >
-                Focus Add Values and enter a value to start the queue.
-              </span>
-            {:else}
-              {#each rightValues as v, i (i)}
-                <PositionValueChip
-                  address={address + i}
-                  addressLabel={regPrefix(address + i)}
-                  index={i}
-                  {type}
-                  value={v}
-                  class="text-blue-600 rounded-md border text-[1em]"
-                />
-              {/each}
-            {/if}
-          </div>
-        {/if}
+        </div>
+        <div class="flex flex-wrap gap-2">
+          {#if rightValues.length === 0}
+            <span
+              class="inline-flex items-center rounded-md border border-dashed bg-background px-2 py-1 text-xs text-muted-foreground"
+            >
+              Focus Add Values and enter a value to start the queue.
+            </span>
+          {:else}
+            {#each rightValues as v, i (i)}
+              <PositionValueChip
+                address={address + i}
+                addressLabel={regPrefix(address + i)}
+                index={i}
+                {type}
+                value={v}
+                class="text-blue-600 rounded-md border text-[1em]"
+              />
+            {/each}
+          {/if}
+        </div>
       </div>
     </Card.Content>
     <Collapsible.Content>

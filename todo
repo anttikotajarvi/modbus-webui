@@ -1,9 +1,4 @@
 Bugs:
-- Can't disconnect when device terminates connection:
- > Device disconnects
- -> Try to read/write
- -> Error (expected)
- -> Disconnect button disabled (not expected)
 - No toast on write registers
 - In "Write preview":
   > write_multiple_registers 
