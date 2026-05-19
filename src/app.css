@@ -1,6 +1,6 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -118,15 +118,24 @@
 
   body {
     @apply bg-background text-foreground;
-    height:100vh;
+    height: 100vh;
   }
   #app {
     height: min-content;
   }
+
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role='button'][aria-disabled='true'] {
+    cursor: not-allowed;
+  }
 }
 
 @layer components {
-
   /* Minimal discrete button */
   button.discrete {
     /* keep button semantics, but look subtle */
@@ -136,7 +145,6 @@
     line-height: 1.2;
     cursor: pointer;
     font-size: inherit;
-
   }
 
   /* Hover/active use currentColor so it matches your text color */
