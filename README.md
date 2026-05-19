@@ -13,8 +13,8 @@ A browser-based UI for Modbus devices. Runs fully client-side via the [Web Seria
 
 ## Quick start
 
-### Use hosted app
-### --> [modbus-webUI](https://modbuswebui.dev/) <--
+### Use hosted app (GitHub Pages)
+##### [modbuswebui.dev](https://modbuswebui.dev/)
 
 ### Offline/local use (no npm or npx)
 
